@@ -17,26 +17,31 @@ const linkCanvas = (canvasID: string) => {
     //Removed onresize since iPhone screen is not likely to resize, and it was causing bugs where nothing was drawing
 }
 
-//ACTUAL DRAWING FUNCTIONS - MatterJS doesn't use gridX and gridY, so I disabled those functions
-const gridX = (x: number) => {
+//ACTUAL DRAWING FUNCTIONS - MatterJS doesn't use ScreenX and ScreenY, so I disabled those functions
+const ScreenX = (x: number) => {
     if (c == undefined) { console.error("Cannot draw, canvas is not linked, please use the linkCanvas(canvasID) before rendering any shapes"); return; }
-    //return ((canvasWidth / 2) + x) * dpi;
-    return x;
+    return ((canvasWidth / 2) + x) * dpi;
 }
-const gridY = (y: number) => {  //on the page y = 0 is at the top, however in an actual grid y = 0 is at the bottom
+const ScreenY = (y: number) => {  //on the page y = 0 is at the top, however in an actual grid y = 0 is at the bottom
     if (c == undefined) { console.error("Cannot draw, canvas is not linked, please use the linkCanvas(canvasID) before rendering any shapes"); return; }
-    //return ((canvasHeight / 2) - y) * dpi;
-    return y;
+    return ((canvasHeight / 2) - y) * dpi;
 }
+const GridX = (screenX: number) => {
+    return (screenX) - (canvasWidth / 2);
+}
+const GridY = (screenY: number) => {
+    return -((screenY) - (canvasHeight / 2));
+}
+
 const plotPoint = (p: number[], colour: string, label?: string) => {
     if (c == undefined) { console.error("Cannot draw, canvas is not linked, please use the linkCanvas(canvasID) before rendering any shapes"); return; }
     //point will be in format: [x, y]
     c.fillStyle = colour;
-    c.fillRect(gridX(p[0]), gridY(p[1]), 10, 10);
+    c.fillRect(ScreenX(p[0]), ScreenY(p[1]), 10, 10);
 
     if (label != undefined) {
         c.font = `${20 * dpi}px Arial`;
-        c.fillText(label, gridX(p[0])! + 10, gridY(p[1])! + 10);
+        c.fillText(label, ScreenX(p[0])! + 10, ScreenY(p[1])! + 10);
     }
 }
 const drawLine = (p1: number[], p2: number[], colour: string, thickness?: number) => {
@@ -47,8 +52,8 @@ const drawLine = (p1: number[], p2: number[], colour: string, thickness?: number
     c.strokeStyle = colour;
     c.lineWidth = linKThickness;
     c.beginPath()
-    c.moveTo(gridX(p1[0]), gridY(p1[1]))
-    c.lineTo(gridX(p2[0]), gridY(p2[1]));
+    c.moveTo(ScreenX(p1[0]), ScreenY(p1[1]))
+    c.lineTo(ScreenX(p2[0]), ScreenY(p2[1]));
     c.stroke();
 }
 const drawShape = (points: number[][], colour: string, outline?: boolean, outlineColour?: string) => {
@@ -57,9 +62,9 @@ const drawShape = (points: number[][], colour: string, outline?: boolean, outlin
     else if (points.length < 3) { console.error("Cannot draw shape, need at least 3 points to draw a shape"); return; }
     c.fillStyle = colour;
     c.beginPath();
-    c.moveTo(gridX(points[0][0]), gridY(points[0][1]));
+    c.moveTo(ScreenX(points[0][0]), ScreenY(points[0][1]));
     for (let pointsIndex = 1; pointsIndex != points.length; pointsIndex += 1) { 
-        c.lineTo(gridX(points[pointsIndex][0]), gridY(points[pointsIndex][1])) 
+        c.lineTo(ScreenX(points[pointsIndex][0]), ScreenY(points[pointsIndex][1])) 
     }
     c.closePath();
     c.fill();

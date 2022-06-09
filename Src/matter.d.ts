@@ -1484,6 +1484,10 @@ declare namespace Matter {
 
     }
 
+    export class Collision {
+        static collides(body1: Body, body2: Body): any;
+    }
+
     /**
     * The `Matter.Composites` module contains factory methods for creating composite bodies
     * with commonly used configurations (such as stacks and chains).
