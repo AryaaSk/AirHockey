@@ -1,5 +1,6 @@
 #System Files
 .DS_Store
+.log
 
 #Dist
 /dist

@@ -4,6 +4,10 @@ linkCanvas("renderingWindow");
 const Vector = (x, y) => {
     return { x: x, y: y };
 };
+function toRadians(degrees) {
+    var pi = Math.PI;
+    return degrees * (pi / 180);
+}
 //Matter Setup
 const ENGINE = Matter.Engine.create();
 ENGINE.gravity.y = -1;
@@ -56,6 +60,11 @@ const InitListeners = () => {
             const topTouch = (leftTouches[0].clientY > leftTouches[1].clientY) ? leftTouches[0] : leftTouches[1];
             const [x, y] = [(bottomTouch.clientX + topTouch.clientX) / 2, (bottomTouch.clientY + topTouch.clientY) / 2];
             [LEFT_X, LEFT_Y] = [GridX(x), GridY(y)];
+            //work out bearing - https://stackoverflow.com/questions/34562518/javascript-maths-get-a-bearing-angle-from-a-point-a-to-b-properly
+            const A = Vector(GridX(bottomTouch.clientX), GridY(bottomTouch.clientY));
+            const B = Vector(GridX(topTouch.clientX), GridY(topTouch.clientY));
+            var angle = (((-(Math.atan2((A.x - B.x), (A.y - B.y)) * (180 / Math.PI)) % 360) + 360) % 360);
+            LEFT_ANGLE = (Math.round(angle) % 90) * 2;
         }
         if (rightTouches.length == 0) { }
         else if (rightTouches.length == 1) {
@@ -67,6 +76,11 @@ const InitListeners = () => {
             const topTouch = (rightTouches[0].clientY > rightTouches[1].clientY) ? rightTouches[0] : rightTouches[1];
             const [x, y] = [(bottomTouch.clientX + topTouch.clientX) / 2, (bottomTouch.clientY + topTouch.clientY) / 2];
             [RIGHT_X, RIGHT_Y] = [GridX(x), GridY(y)];
+            //work out bearing
+            const A = Vector(GridX(bottomTouch.clientX), GridY(bottomTouch.clientY));
+            const B = Vector(GridX(topTouch.clientX), GridY(topTouch.clientY));
+            var angle = (((-(Math.atan2((A.x - B.x), (A.y - B.y)) * (180 / Math.PI)) % 360) + 360) % 360);
+            RIGHT_ANGLE = (Math.round(angle) % 90) * 2;
         }
     });
 };
@@ -80,8 +94,11 @@ class Racket {
     }
     updatePosition(x, y) {
         [this.previousPosition.x, this.previousPosition.y] = [this.currentPosition.x, this.currentPosition.y];
-        [this.currentPosition.x, this.currentPosition.y] = [x, y + 50];
+        [this.currentPosition.x, this.currentPosition.y] = [x, y + 50]; //will have to change the offset to also include the angle
         Matter.Body.set(this.mBody, "position", this.currentPosition);
+    }
+    updateBearing(bearing) {
+        Matter.Body.setAngle(this.mBody, toRadians(bearing));
     }
     checkShuttleInteraction() {
         const collision = Matter.Collision.collides(this.mBody, SHUTTLE);
@@ -138,6 +155,8 @@ const Tick = (delta) => {
     Matter.Engine.update(ENGINE, delta);
     LEFT_RACKET.updatePosition(LEFT_X, LEFT_Y);
     RIGHT_RACKET.updatePosition(RIGHT_X, RIGHT_Y);
+    //LEFT_RACKET.updateBearing(LEFT_ANGLE);
+    //RIGHT_RACKET.updateBearing(RIGHT_ANGLE);
     LEFT_RACKET.checkShuttleInteraction();
     RIGHT_RACKET.checkShuttleInteraction();
     if (NET.checkShuttleCollision() == true) {
