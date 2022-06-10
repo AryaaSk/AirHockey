@@ -48,17 +48,46 @@ const RenderBodies = () => {
 
 let [LEFT_X, LEFT_Y] = [-(canvasWidth / 4), 0]; //information about where the finger is current positioned, always correct
 let [RIGHT_X, RIGHT_Y] = [canvasWidth / 4, 0];
+let [LEFT_ANGLE, RIGHT_ANGLE] = [0, 0]; //the bearing from the bottom touch -> top touch
+
 const InitListeners = () => {
     document.getElementById("renderingWindow")!.addEventListener('touchmove', ($e) => {
         //Read this to understand about JS touch events - https://stackoverflow.com/questions/7056026/variation-of-e-touches-e-targettouches-and-e-changedtouches
         const targetTouches = $e.targetTouches;
+
+        const leftTouches: Touch[] = [];
+        const rightTouches: Touch[] = [];
         for (const touch of targetTouches) {
             if (touch.clientX < (canvasWidth / 2) - (Racket.mWidth / 2) - (Net.mWidth / 2)) { //- halfNetWidth - halfRacquetWidth
-                [LEFT_X, LEFT_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+                leftTouches.push(touch);
             }
             else if (touch.clientX > (canvasWidth / 2) + (Racket.mWidth / 2) + (Net.mWidth / 2)) {
-                [RIGHT_X, RIGHT_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+                rightTouches.push(touch);
             }
+        }
+
+        if (leftTouches.length == 0) {}
+        else if (leftTouches.length == 1) {
+            const touch = leftTouches[0];
+            [LEFT_X, LEFT_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+        }
+        else if (leftTouches.length > 1) {
+            const bottomTouch = (leftTouches[0].clientY <= leftTouches[1].clientY) ? leftTouches[0] : leftTouches[1];
+            const topTouch = (leftTouches[0].clientY > leftTouches[1].clientY) ? leftTouches[0] : leftTouches[1];
+            const [x, y] = [(bottomTouch.clientX + topTouch.clientX) / 2, (bottomTouch.clientY + topTouch.clientY) / 2];
+            [LEFT_X, LEFT_Y] = [GridX(x), GridY(y)];
+        }
+
+        if (rightTouches.length == 0) {}
+        else if (rightTouches.length == 1) {
+            const touch = rightTouches[0];
+            [RIGHT_X, RIGHT_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+        }
+        else if (rightTouches.length > 1) {
+            const bottomTouch = (rightTouches[0].clientY <= rightTouches[1].clientY) ? rightTouches[0] : rightTouches[1];
+            const topTouch = (rightTouches[0].clientY > rightTouches[1].clientY) ? rightTouches[0] : rightTouches[1];
+            const [x, y] = [(bottomTouch.clientX + topTouch.clientX) / 2, (bottomTouch.clientY + topTouch.clientY) / 2];
+            [RIGHT_X, RIGHT_Y] = [GridX(x), GridY(y)];
         }
     });
 }
@@ -79,7 +108,7 @@ class Racket {
 
     updatePosition(x: number, y: number) {
         [this.previousPosition.x, this.previousPosition.y] = [this.currentPosition.x, this.currentPosition.y];
-        [this.currentPosition.x, this.currentPosition.y] = [x, y];
+        [this.currentPosition.x, this.currentPosition.y] = [x, y + 50];
         Matter.Body.set(this.mBody, "position", this.currentPosition);
     }
 
@@ -109,13 +138,14 @@ class Racket {
         }
     }
 
-    constructor (mBody: Matter.Body) {
+    constructor (position: Vector2D) {
+        const mBody = Matter.Bodies.rectangle(position.x, position.y, Racket.mWidth, Racket.mHeight, { isStatic: true })
         this.mBody = mBody;
     }
 }
 
-const LEFT_RACKET = new Racket(Matter.Bodies.rectangle(-(canvasWidth / 4), 0, Racket.mWidth, Racket.mHeight, { isStatic: true }));
-const RIGHT_RACKET = new Racket(Matter.Bodies.rectangle(canvasWidth / 4, 0, Racket.mWidth, Racket.mHeight, { isStatic: true }));
+const LEFT_RACKET = new Racket(Vector(-(canvasWidth / 4), 0));
+const RIGHT_RACKET = new Racket(Vector(canvasWidth / 4, 0));
 Matter.Composite.add(ENGINE.world, [LEFT_RACKET.mBody, RIGHT_RACKET.mBody]);
 
 class Net {
@@ -140,9 +170,9 @@ class Net {
 const NET = new Net(Matter.Bodies.rectangle(0, -(canvasHeight / 4), Net.mWidth, Net.mHeight, { isStatic: true }));
 Matter.Composite.add(ENGINE.world, [NET.mBody]);
 
-const SHUTTLE = Matter.Bodies.circle(-(canvasWidth / 4), canvasHeight, 25);
-console.log(SHUTTLE)
-Matter.Body.set(SHUTTLE, "restitution", 0);
+//const SHUTTLE = Matter.Bodies.circle(-(canvasWidth / 4), 0, 25);
+const SHUTTLE = Matter.Bodies.rectangle(-(canvasWidth / 4), 0, 50, 50);
+Matter.Body.set(SHUTTLE, "restitution", 0.2);
 Matter.Composite.add(ENGINE.world, [SHUTTLE]);
 
 
