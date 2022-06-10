@@ -53,7 +53,6 @@ const RenderBodies = () => {
 
 let [LEFT_X, LEFT_Y] = [-(canvasWidth / 4), 0]; //information about where the finger is current positioned, always correct
 let [RIGHT_X, RIGHT_Y] = [canvasWidth / 4, 0];
-let [LEFT_ANGLE, RIGHT_ANGLE] = [0, 0]; //the bearing from the bottom touch -> top touch
 
 const InitListeners = () => {
     document.getElementById("renderingWindow")!.addEventListener('touchmove', ($e) => {
@@ -81,12 +80,6 @@ const InitListeners = () => {
             const topTouch = (leftTouches[0].clientY > leftTouches[1].clientY) ? leftTouches[0] : leftTouches[1];
             const [x, y] = [(bottomTouch.clientX + topTouch.clientX) / 2, (bottomTouch.clientY + topTouch.clientY) / 2];
             [LEFT_X, LEFT_Y] = [GridX(x), GridY(y)];
-
-            //work out bearing - https://stackoverflow.com/questions/34562518/javascript-maths-get-a-bearing-angle-from-a-point-a-to-b-properly
-            const A = Vector(GridX(bottomTouch.clientX), GridY(bottomTouch.clientY));
-            const B = Vector(GridX(topTouch.clientX), GridY(topTouch.clientY));
-            var angle = ( ( ( -(Math.atan2((A.x-B.x),(A.y-B.y))*(180/Math.PI)) % 360) + 360) % 360); 
-            LEFT_ANGLE = (Math.round(angle) % 90) * 2;
         }
 
         if (rightTouches.length == 0) {}
@@ -99,12 +92,6 @@ const InitListeners = () => {
             const topTouch = (rightTouches[0].clientY > rightTouches[1].clientY) ? rightTouches[0] : rightTouches[1];
             const [x, y] = [(bottomTouch.clientX + topTouch.clientX) / 2, (bottomTouch.clientY + topTouch.clientY) / 2];
             [RIGHT_X, RIGHT_Y] = [GridX(x), GridY(y)];
-
-            //work out bearing
-            const A = Vector(GridX(bottomTouch.clientX), GridY(bottomTouch.clientY));
-            const B = Vector(GridX(topTouch.clientX), GridY(topTouch.clientY));
-            var angle = ( ( ( -(Math.atan2((A.x-B.x),(A.y-B.y))*(180/Math.PI)) % 360) + 360) % 360); 
-            RIGHT_ANGLE = (Math.round(angle) % 90) * 2;
         }
     });
 }
@@ -133,9 +120,9 @@ class Racket {
     }
 
     checkShuttleInteraction() {
-        const collision = Matter.Collision.collides(this.mBody, SHUTTLE);
+        const collision = Matter.Collision.collides(this.mBody, SHUTTLE.mBody);
         if (collision != null) {
-            const [xDamping, yDamping] = [0.2, 1];
+            const [xDamping, yDamping] = [0.1, 1];
     
             const travelVector = [(this.currentPosition.x - this.previousPosition.x) * xDamping, (this.currentPosition.y - this.previousPosition.y) * yDamping]; //find travel vector which is currentXY - previousXY
             const distance = Math.sqrt(travelVector[0]**2 + travelVector[1]**2); //work out speed by using pythagorus on forceVector to find distance, and time is 16ms.
@@ -154,7 +141,7 @@ class Racket {
                 return;
             }
     
-            Matter.Body.applyForce(SHUTTLE, SHUTTLE.position, {x: forceVector[0], y: forceVector[1]});
+            Matter.Body.applyForce(SHUTTLE.mBody, SHUTTLE.mBody.position, {x: forceVector[0], y: forceVector[1]});
         }
     }
 
@@ -166,6 +153,8 @@ class Racket {
 
 const LEFT_RACKET = new Racket(Vector(-(canvasWidth / 4), 0));
 const RIGHT_RACKET = new Racket(Vector(canvasWidth / 4, 0));
+LEFT_RACKET.updateBearing(70);
+RIGHT_RACKET.updateBearing(-70);
 Matter.Composite.add(ENGINE.world, [LEFT_RACKET.mBody, RIGHT_RACKET.mBody]);
 
 class Net {
@@ -174,7 +163,7 @@ class Net {
     static mWidth = 20;
 
     checkShuttleCollision() {
-        const collision = Matter.Collision.collides(this.mBody, SHUTTLE);
+        const collision = Matter.Collision.collides(this.mBody, SHUTTLE.mBody);
         if (collision != null) {
             return true;
         }
@@ -187,22 +176,34 @@ class Net {
         this.mBody = mBody;
     }
 }
-const NET = new Net(Matter.Bodies.rectangle(0, -(canvasHeight / 4), Net.mWidth, Net.mHeight, { isStatic: true }));
+const NET = new Net(Matter.Bodies.rectangle(0, -(canvasHeight / 2) + Net.mHeight / 2, Net.mWidth, Net.mHeight, { isStatic: true }));
 Matter.Composite.add(ENGINE.world, [NET.mBody]);
 
-//const SHUTTLE = Matter.Bodies.circle(-(canvasWidth / 4), 0, 25);
-const SHUTTLE = Matter.Bodies.rectangle(-(canvasWidth / 4), 0, 50, 50);
-Matter.Body.set(SHUTTLE, "restitution", 0.2);
-Matter.Composite.add(ENGINE.world, [SHUTTLE]);
+class Shuttle {
+    mBody: Matter.Body;
+    static mLength = 50;
 
+    reset() {
+        if (this.mBody.position.x >= 0) {
+            Matter.Body.set(SHUTTLE.mBody, "position", Vector(canvasWidth / 4, 0));
+        }
+        else {
+            Matter.Body.set(SHUTTLE.mBody, "position", Vector(-(canvasWidth / 4), 0));
+        }
+    }
 
-
-
-
-
-const Reset = () => {
-    Matter.Body.set(SHUTTLE, "position", Vector(-(canvasWidth / 4), 0));
+    constructor (mBody: Matter.Body) {
+        this.mBody = mBody;
+        Matter.Body.set(this.mBody, "restitution", 0.2);
+    }
 }
+
+//const SHUTTLE = Matter.Bodies.circle(-(canvasWidth / 4), 0, 25);
+const SHUTTLE = new Shuttle(Matter.Bodies.rectangle(-(canvasWidth / 4), 0, 50, 50));
+Matter.Composite.add(ENGINE.world, [SHUTTLE.mBody]);
+
+
+
 
 const Tick = (delta: number) => {
     Matter.Engine.update(ENGINE, delta);
@@ -210,15 +211,12 @@ const Tick = (delta: number) => {
     LEFT_RACKET.updatePosition(LEFT_X, LEFT_Y);
     RIGHT_RACKET.updatePosition(RIGHT_X, RIGHT_Y);
 
-    //LEFT_RACKET.updateBearing(LEFT_ANGLE);
-    //RIGHT_RACKET.updateBearing(RIGHT_ANGLE);
-
     LEFT_RACKET.checkShuttleInteraction();
     RIGHT_RACKET.checkShuttleInteraction();
 
     if (NET.checkShuttleCollision() == true) {
         console.log("Game over");
-        Reset();
+        SHUTTLE.reset();
     }
 
     clearCanvas();
