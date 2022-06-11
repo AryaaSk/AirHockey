@@ -2,7 +2,10 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#ad090950">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Air Hockey</title>
 
     <script src="/Assets/matter.js"></script>
@@ -10,9 +13,12 @@
     <script src="/_JS/Main/objects.js"></script>
     <script src="/_JS/Main/main.js" defer></script>
     <link rel="stylesheet" href="main.css">
+    
+    <link rel="manifest" href="/Src/manifest.json">
 </head>
 <body ontouchstart>
-    
+<div id="main">
+
     <div id="scores">
         <label class="scoreLabel" id="topScore">0</label>
         <label class="scoreLabel" id="bottomScore">0</label>
@@ -28,5 +34,6 @@
         <button class="gameOverButton" id="doneButton" style="color: black">Done</button>
     </div>
 
+</div>
 </body>
 </html>

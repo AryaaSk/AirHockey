@@ -18,6 +18,13 @@ body {
     --animationDuration: 10s;
     --lowerBound: 35%;
     --upperBound: 65%;
+
+    background-color: #ad090950;
+}
+#main {
+    height: 100%; /* This is so I can change the bodies background colour without affecting the red and blue colours due to opacity, in fullscreen PWA mode */
+    width: 100%;
+    background-color: white;
 }
 
 #background {
@@ -54,6 +61,22 @@ body {
     to { height: var(--lowerBound); }
 }
 
+#wrapper {
+    height: max-content;
+    width: max-content;
+    padding: 20px;
+
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, calc(-50% - 1.8rem));
+
+    background-color: white;
+    border: 1px solid black;
+
+    text-align: center;
+}
+
 .gameButton {
     height: 40px;
     width: 100%;
@@ -68,20 +91,4 @@ body {
 }
 .gameButton:last-of-type {
     margin-bottom: 0;
-}
-
-#wrapper {
-    height: max-content;
-    width: max-content;
-    padding: 20px;
-
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%);
-
-    background-color: white;
-    border: 1px solid black;
-
-    text-align: center;
 }
