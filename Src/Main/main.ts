@@ -112,7 +112,7 @@ class Racket {
 
     updatePosition(x: number, y: number) {
         [this.previousPosition.x, this.previousPosition.y] = [this.currentPosition.x, this.currentPosition.y];
-        [this.currentPosition.x, this.currentPosition.y] = [x, y + 50]; //will have to change the offset to also include the angle
+        [this.currentPosition.x, this.currentPosition.y] = [x, y - 100]; //will have to change the offset to also include the angle
         Matter.Body.set(this.mBody, "position", this.currentPosition);
     }
     updateBearing(bearing: number) {
@@ -122,7 +122,7 @@ class Racket {
     checkShuttleInteraction() {
         const collision = Matter.Collision.collides(this.mBody, SHUTTLE.mBody);
         if (collision != null) {
-            const [xDamping, yDamping] = [0.1, 1];
+            const [xDamping, yDamping] = [0.15, 1];
     
             const travelVector = [(this.currentPosition.x - this.previousPosition.x) * xDamping, (this.currentPosition.y - this.previousPosition.y) * yDamping]; //find travel vector which is currentXY - previousXY
             const distance = Math.sqrt(travelVector[0]**2 + travelVector[1]**2); //work out speed by using pythagorus on forceVector to find distance, and time is 16ms.
