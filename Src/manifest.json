@@ -1,0 +1,19 @@
+{
+    "name": "Air Hockey",
+    "short_name": "Air Hockey",
+    "description": "A game which lets you play air hockey against someone else locally",
+    "icons": [
+      {
+        "src": "Icon1024.png",
+        "sizes": "1024x1024",
+        "type": "image/png"
+      },
+      {
+        "src": "Icon180.png",
+        "sizes": "180x180",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "/",
+    "display": "fullscreen"
+  }
