@@ -152,7 +152,7 @@ const BOTTOM_GOAL = new Goal(Vector(0, -(canvasHeight / 2) + (Goal.mHeight / 2))
 const TOP_GOAL = new Goal(Vector(0, (canvasHeight / 2) - (Goal.mHeight / 2)), TOP_COLOUR);
 Matter.Composite.add(ENGINE.world, [BOTTOM_GOAL.mBody, TOP_GOAL.mBody]);
 //Game loop
-const TICK_INTERVAL = 10;
+const TICK_INTERVAL = 16;
 const Tick = (delta) => {
     Matter.Engine.update(ENGINE, delta);
     HandleKeys();

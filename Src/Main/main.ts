@@ -194,7 +194,7 @@ Matter.Composite.add(ENGINE.world, [BOTTOM_GOAL.mBody, TOP_GOAL.mBody]);
 
 
 //Game loop
-const TICK_INTERVAL = 10;
+const TICK_INTERVAL = 16;
 const Tick = (delta: number) => {
     Matter.Engine.update(ENGINE, delta);
 

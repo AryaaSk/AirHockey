@@ -1,5 +1,9 @@
+@font-face {
+    font-family: 'Impact';
+    src: URL('/Assets/impact.ttf') format('truetype');
+}
 body {
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: 'Impact';
     color: black;
 
     margin: 0;
