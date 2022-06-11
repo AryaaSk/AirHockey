@@ -25,6 +25,10 @@ body {
     height: 100%; /* This is so I can change the bodies background colour without affecting the red and blue colours due to opacity, in fullscreen PWA mode */
     width: 100%;
     background-color: white;
+
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
 }
 
 #background {

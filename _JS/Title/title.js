@@ -4,7 +4,7 @@ const InitButtonListeners = () => {
         location.href = "/Src/Main/main.html";
     };
     document.getElementById("installButton").onclick = () => {
-        alert("1. Click on the share button in the bottom tab bar\n2. On the menu, click on 'Add to Home Screen'\n3. Once you have done that you can use this game like a regular app");
+        alert("1. Click on the share button in the bottom tab bar\n2. Click on 'Add to Home Screen'\n3. Once you have done that you can use this game like a regular app");
     };
 };
 const MAIN_TITLE = () => {
