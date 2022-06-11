@@ -66,31 +66,35 @@ const KEYS_DOWN = []; //every key which is currently being pressed down, then ha
 let [BOTTOM_X, BOTTOM_Y] = [0, -(canvasHeight / 4)]; //information about where the finger is current positioned, always correct
 let [TOP_X, TOP_Y] = [0, canvasHeight / 4];
 const InitListeners = () => {
-    document.getElementById("renderingWindow").addEventListener('touchmove', ($e) => {
-        //Read this to understand about JS touch events - https://stackoverflow.com/questions/7056026/variation-of-e-touches-e-targettouches-and-e-changedtouches
-        const targetTouches = $e.targetTouches;
-        for (const touch of targetTouches) {
-            const touchY = GridY(touch.clientY);
-            if (touchY < (0 - (Paddle.mRadius) - Paddle.touchOffsetY)) { //halfline - halfRacquetHeight
-                [BOTTOM_X, BOTTOM_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+    if (isMobile == true) {
+        document.getElementById("renderingWindow").addEventListener('touchmove', ($e) => {
+            //Read this to understand about JS touch events - https://stackoverflow.com/questions/7056026/variation-of-e-touches-e-targettouches-and-e-changedtouches
+            const targetTouches = $e.targetTouches;
+            for (const touch of targetTouches) {
+                const touchY = GridY(touch.clientY);
+                if (touchY < (0 - (Paddle.mRadius) - Paddle.touchOffsetY)) { //halfline - halfRacquetHeight
+                    [BOTTOM_X, BOTTOM_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+                }
+                else if (touchY > (0 + (Paddle.mRadius) + Paddle.touchOffsetY)) {
+                    [TOP_X, TOP_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+                }
             }
-            else if (touchY > (0 + (Paddle.mRadius) + Paddle.touchOffsetY)) {
-                [TOP_X, TOP_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+        });
+    }
+    else {
+        document.onkeydown = ($e) => {
+            const key = $e.key.toLowerCase();
+            if (KEYS_DOWN.includes(key) == false) {
+                KEYS_DOWN.push(key);
             }
-        }
-    });
-    document.onkeydown = ($e) => {
-        const key = $e.key.toLowerCase();
-        if (KEYS_DOWN.includes(key) == false) {
-            KEYS_DOWN.push(key);
-        }
-    };
-    document.onkeyup = ($e) => {
-        const key = $e.key.toLowerCase();
-        if (KEYS_DOWN.includes(key) == true) {
-            KEYS_DOWN.splice(KEYS_DOWN.indexOf(key), 1);
-        }
-    };
+        };
+        document.onkeyup = ($e) => {
+            const key = $e.key.toLowerCase();
+            if (KEYS_DOWN.includes(key) == true) {
+                KEYS_DOWN.splice(KEYS_DOWN.indexOf(key), 1);
+            }
+        };
+    }
 };
 const HandleKeys = () => {
     for (const key of KEYS_DOWN) {
@@ -155,7 +159,9 @@ Matter.Composite.add(ENGINE.world, [BOTTOM_GOAL.mBody, TOP_GOAL.mBody]);
 const TICK_INTERVAL = 16;
 const Tick = (delta) => {
     Matter.Engine.update(ENGINE, delta);
-    HandleKeys();
+    if (isMobile == false) {
+        HandleKeys();
+    }
     BOTTOM_PADDLE.updatePosition(BOTTOM_X, BOTTOM_Y);
     TOP_PADDLE.updatePosition(TOP_X, TOP_Y);
     BOTTOM_PADDLE.checkCounterInteraction();
