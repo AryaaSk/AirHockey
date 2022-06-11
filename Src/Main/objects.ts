@@ -12,9 +12,9 @@ class Body {
 }
 
 class Paddle extends Body{
-    static mHeight = 30;
-    static mWidth = 150;
+    static mRadius = 75;
     static touchOffsetY = 20;
+    static moveSpeed = 10;
 
     currentPosition: Vector2D = Vector(0, 0);
     previousPosition: Vector2D = Vector(0, 0);
@@ -28,11 +28,21 @@ class Paddle extends Body{
     updateBearing(bearing: number) {
         Matter.Body.setAngle(this.mBody, toRadians(bearing));
     }
+    translate(x: number, y: number) {
+        [this.previousPosition.x, this.previousPosition.y] = [this.currentPosition.x, this.currentPosition.y];
+        this.currentPosition.x += x;
+        this.currentPosition.y += y;
+        Matter.Body.set(this.mBody, "position", this.currentPosition);
+    }
 
     checkCounterInteraction() {
         const collision = Matter.Collision.collides(this.mBody, COUNTER.mBody);
         if (collision != null) {
-            const [xDamping, yDamping] = [0.2, 1];
+            let [xDamping, yDamping] = [0.2, 1];
+            if (isMobile == false) {
+                xDamping *= 0.8;
+                yDamping *= 0.8;
+            }
     
             const travelVector = [(this.currentPosition.x - this.previousPosition.x) * xDamping, (this.currentPosition.y - this.previousPosition.y) * yDamping]; //find travel vector which is currentXY - previousXY
             const distance = Math.sqrt(travelVector[0]**2 + travelVector[1]**2); //work out speed by using pythagorus on travelVector to find distance, and time is 16ms.
@@ -53,10 +63,12 @@ class Paddle extends Body{
         }
     }
 
-    constructor () {
+    constructor (position: Vector2D) {
         super();
-        const mBody = Matter.Bodies.rectangle(canvasHeight / 2, 0, Paddle.mWidth, Paddle.mHeight, { isStatic: true }); //just spawn at canvasHeight/2 to stop it from clamping the counter, the position gets reset by the BOTTOM_X etc... anyway as soon as the game starts
+        const mBody = Matter.Bodies.circle(position.x, position.y, Paddle.mRadius, { isStatic: true }); //just spawn at canvasHeight/2 to stop it from clamping the counter, the position gets reset by the BOTTOM_X etc... anyway as soon as the game starts
         this.mBody = mBody;
+        [this.previousPosition.x, this.previousPosition.y] = [position.x, position.y];
+        [this.currentPosition.x, this.currentPosition.y] = [position.x, position.y];
     }
 }
 

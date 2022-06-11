@@ -11,6 +11,7 @@ const toRadians = (degrees: number) => {
   var pi = Math.PI;
   return degrees * (pi/180);
 }
+declare const isMobile: boolean;
 
 
 //Canvas Setup
@@ -88,6 +89,7 @@ const CheckForWin = () => {
 
 
 //Listeners
+const KEYS_DOWN: String[] = []; //every key which is currently being pressed down, then handled in the gameloop
 let [BOTTOM_X, BOTTOM_Y] = [0, -(canvasHeight / 4)]; //information about where the finger is current positioned, always correct
 let [TOP_X, TOP_Y] = [0, canvasHeight / 4];
 const InitListeners = () => {
@@ -97,14 +99,73 @@ const InitListeners = () => {
         for (const touch of targetTouches) {
             const touchY = GridY(touch.clientY);
 
-            if (touchY < (0 - (Paddle.mHeight / 2) - Paddle.touchOffsetY)) { //halfline - halfRacquetHeight
+            if (touchY < (0 - (Paddle.mRadius) - Paddle.touchOffsetY)) { //halfline - halfRacquetHeight
                 [BOTTOM_X, BOTTOM_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
             }
-            else if (touchY > (0 + (Paddle.mHeight / 2) + Paddle.touchOffsetY)) {
+            else if (touchY > (0 + (Paddle.mRadius) + Paddle.touchOffsetY)) {
                 [TOP_X, TOP_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
             }
         }
     });
+
+    document.onkeydown = ($e) => { //if you just use the regular onkeydown method there is a slight delay
+        const key = $e.key.toLowerCase();
+        if (KEYS_DOWN.includes(key) == false) { KEYS_DOWN.push(key); }
+    }
+    document.onkeyup = ($e) => {
+        const key = $e.key.toLowerCase();
+        if (KEYS_DOWN.includes(key) == true) { KEYS_DOWN.splice(KEYS_DOWN.indexOf(key), 1); }
+    }
+}
+const HandleKeys = () => {
+    for (const key of KEYS_DOWN) {
+        switch (key) {
+            case "w":
+                if (TOP_Y <= canvasHeight / 2 - Paddle.mRadius + Paddle.touchOffsetY / 2) {
+                    TOP_Y += Paddle.moveSpeed;
+                }
+                break;
+            case "a":
+                if (TOP_X >= -(canvasWidth / 2) + Paddle.mRadius) {
+                    TOP_X -= Paddle.moveSpeed;
+                }
+                break;
+            case "s":
+                if (TOP_Y >= 0 + Paddle.mRadius + Paddle.touchOffsetY) {
+                    TOP_Y -= Paddle.moveSpeed;
+                }
+                break;
+            case "d":
+                if (TOP_X <= canvasWidth / 2 - Paddle.mRadius) {
+                    TOP_X += Paddle.moveSpeed;
+                }
+                break;
+
+            case "arrowup":
+                if (BOTTOM_Y <= 0 - Paddle.mRadius + Paddle.touchOffsetY / 2 - Paddle.touchOffsetY) {
+                    BOTTOM_Y += Paddle.moveSpeed;
+                }
+                break;
+            case "arrowleft":
+                if (BOTTOM_X >= -(canvasWidth / 2) + Paddle.mRadius) {
+                    BOTTOM_X -= Paddle.moveSpeed;
+                }
+                break;
+            case "arrowdown":
+                if (BOTTOM_Y >= -(canvasHeight / 2) + Paddle.mRadius / 2) {
+                    BOTTOM_Y -= Paddle.moveSpeed;
+                }
+                break;
+            case "arrowright":
+                if (BOTTOM_X <= canvasWidth / 2 - Paddle.mRadius) {
+                    BOTTOM_X += Paddle.moveSpeed;
+                }
+                break;
+            
+            default:
+                break;
+        }
+    }
 }
 
 
@@ -113,8 +174,8 @@ const InitListeners = () => {
 
 
 // Objects
-const BOTTOM_PADDLE = new Paddle();
-const TOP_PADDLE = new Paddle();
+const BOTTOM_PADDLE = new Paddle(Vector(0, -(canvasHeight / 4)));
+const TOP_PADDLE = new Paddle(Vector(0, canvasHeight / 4));
 BOTTOM_PADDLE.touchOffset.y = Paddle.touchOffsetY;
 TOP_PADDLE.touchOffset.y = -Paddle.touchOffsetY;
 Matter.Composite.add(ENGINE.world, [BOTTOM_PADDLE.mBody, TOP_PADDLE.mBody]);
@@ -137,6 +198,7 @@ const TICK_INTERVAL = 10;
 const Tick = (delta: number) => {
     Matter.Engine.update(ENGINE, delta);
 
+    HandleKeys();
     BOTTOM_PADDLE.updatePosition(BOTTOM_X, BOTTOM_Y);
     TOP_PADDLE.updatePosition(TOP_X, TOP_Y);
 

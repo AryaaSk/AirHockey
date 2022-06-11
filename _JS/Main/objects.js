@@ -8,13 +8,15 @@ class Body {
     }
 }
 class Paddle extends Body {
-    constructor() {
+    constructor(position) {
         super();
         this.currentPosition = Vector(0, 0);
         this.previousPosition = Vector(0, 0);
         this.touchOffset = Vector(0, 0); //usually you want the finger to be behind the paddle, so that the user can still see the paddle
-        const mBody = Matter.Bodies.rectangle(canvasHeight / 2, 0, Paddle.mWidth, Paddle.mHeight, { isStatic: true }); //just spawn at canvasHeight/2 to stop it from clamping the counter, the position gets reset by the BOTTOM_X etc... anyway as soon as the game starts
+        const mBody = Matter.Bodies.circle(position.x, position.y, Paddle.mRadius, { isStatic: true }); //just spawn at canvasHeight/2 to stop it from clamping the counter, the position gets reset by the BOTTOM_X etc... anyway as soon as the game starts
         this.mBody = mBody;
+        [this.previousPosition.x, this.previousPosition.y] = [position.x, position.y];
+        [this.currentPosition.x, this.currentPosition.y] = [position.x, position.y];
     }
     updatePosition(x, y) {
         [this.previousPosition.x, this.previousPosition.y] = [this.currentPosition.x, this.currentPosition.y];
@@ -24,10 +26,20 @@ class Paddle extends Body {
     updateBearing(bearing) {
         Matter.Body.setAngle(this.mBody, toRadians(bearing));
     }
+    translate(x, y) {
+        [this.previousPosition.x, this.previousPosition.y] = [this.currentPosition.x, this.currentPosition.y];
+        this.currentPosition.x += x;
+        this.currentPosition.y += y;
+        Matter.Body.set(this.mBody, "position", this.currentPosition);
+    }
     checkCounterInteraction() {
         const collision = Matter.Collision.collides(this.mBody, COUNTER.mBody);
         if (collision != null) {
-            const [xDamping, yDamping] = [0.2, 1];
+            let [xDamping, yDamping] = [0.2, 1];
+            if (isMobile == false) {
+                xDamping *= 0.8;
+                yDamping *= 0.8;
+            }
             const travelVector = [(this.currentPosition.x - this.previousPosition.x) * xDamping, (this.currentPosition.y - this.previousPosition.y) * yDamping]; //find travel vector which is currentXY - previousXY
             const distance = Math.sqrt(travelVector[0] ** 2 + travelVector[1] ** 2); //work out speed by using pythagorus on travelVector to find distance, and time is 16ms.
             const speed = distance / TICK_INTERVAL; //speed unit: pixels/ms
@@ -44,9 +56,9 @@ class Paddle extends Body {
         }
     }
 }
-Paddle.mHeight = 30;
-Paddle.mWidth = 150;
+Paddle.mRadius = 75;
 Paddle.touchOffsetY = 20;
+Paddle.moveSpeed = 10;
 class Counter extends Body {
     constructor() {
         super();
