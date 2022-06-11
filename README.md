@@ -1,5 +1,5 @@
 # Air Hockey
-## A 2D Air Hockey game where the aim of the game is to get the counter into the other person's goal.
+## A 2D Air Hockey game, I built to learn more about 2D physics, and new styles
 
 ## URL: https://airhockey-fc617.web.app
 ### PWA
