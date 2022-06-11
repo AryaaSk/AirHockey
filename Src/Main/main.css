@@ -1,0 +1,74 @@
+body {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+
+    margin: 0;
+    touch-action: none;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+}
+#renderingWindow {
+    height: 100%;
+    width: 100%;
+
+    touch-action: none;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+}
+
+#scores {
+    pointer-events:none;
+
+    position: fixed;
+    height: 100%;
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 50% 50%;
+    place-items: center;
+
+    z-index: -1;
+}
+.scoreLabel {
+    height: max-content;
+    width: max-content;
+    font-size: 10rem;
+}
+
+#gameOver {
+    position: fixed;
+    height: max-content;
+    width: 50%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+
+    background-color: rgb(245, 245, 245);
+    border: 1px solid black;
+
+    text-align: center;
+}
+.gameOverButton {
+    height: 40px;
+    width: 90%;
+    margin-bottom: 10px;
+
+    background-color: white;
+    border: 1px solid black;
+}
+.gameOverButton:active {
+    background-color: rgb(225, 225, 225);
+}

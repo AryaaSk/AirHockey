@@ -7,29 +7,26 @@
 
     <script src="/Assets/matter.js"></script>
     <script src="/_JS/canvasUtilities.js"></script>
+    <script src="/_JS/Main/objects.js"></script>
     <script src="/_JS/Main/main.js" defer></script>
-
-    <style>
-        body {
-            margin: 0;
-            touch-action: none;
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none; /* Safari */
-            -khtml-user-select: none; /* Konqueror HTML */
-            -moz-user-select: none; /* Old versions of Firefox */
-                -ms-user-select: none; /* Internet Explorer/Edge */
-                    user-select: none; /* Non-prefixed version, currently
-                                        supported by Chrome, Edge, Opera and Firefox */
-        }
-        #renderingWindow {
-            height: 100%;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="main.css">
 </head>
-<body>
+<body ontouchstart>
     
+    <div id="scores">
+        <label class="scoreLabel" id="topScore">0</label>
+        <label class="scoreLabel" id="bottomScore">0</label>
+    </div>
+
     <canvas id="renderingWindow"></canvas>
+
+    <div id="gameOver">
+        <h1 style="margin-bottom: 10px; margin-top: 0px;">Game Over</h1>
+        <h2 style="margin-top: 0;">Red Won</h2>
+
+        <button class="gameOverButton" id="rematchButton">Rematch</button>
+        <button class="gameOverButton" id="doneButton">Done</button>
+    </div>
 
 </body>
 </html>

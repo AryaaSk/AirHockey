@@ -1,3 +1,4 @@
+//Setup
 //Extra helpers
 interface Vector2D {
     x: number
@@ -11,6 +12,7 @@ const toRadians = (degrees: number) => {
   return degrees * (pi/180);
 }
 
+
 //Canvas Setup
 linkCanvas("renderingWindow");
 const RenderDecorations = () => {
@@ -19,20 +21,23 @@ const RenderDecorations = () => {
         [canvasWidth / 2, 0],
         [canvasWidth / 2, -(canvasHeight / 2)],
         [-canvasWidth / 2, -(canvasHeight / 2)]
-    ], "#3350d450");
+    ], BOTTOM_COLOUR + "50");
 
     drawShape([ //red side
         [-canvasWidth / 2, 0],
         [canvasWidth / 2, 0],
         [canvasWidth / 2, (canvasHeight / 2)],
         [-canvasWidth / 2, (canvasHeight / 2)]
-    ], "#ad090950");
+    ], TOP_COLOUR + "50");
+
+    drawLine([-(canvasWidth / 2), 0], [canvasWidth / 2, 0], "black");
 }
 
 
 //Matter Setup
 const ENGINE = Matter.Engine.create();
 ENGINE.gravity.y = 0; //no gravity since players just hit it
+
 const InitBorders = () => {
     const borderThickness = 50;
     const topWall = Matter.Bodies.rectangle(0, (canvasHeight / 2) + (borderThickness / 2), canvasWidth, borderThickness, { isStatic: true });
@@ -43,16 +48,37 @@ const InitBorders = () => {
     [topWall.restitution, bottomWall.restitution, leftWall.restitution, rightWall.restitution] = [1, 1, 1, 1];
     Matter.Composite.add(ENGINE.world, [topWall, bottomWall, leftWall, rightWall]);
 }
+
 const RenderBodies = () => {
-    let bodies = Matter.Composite.allBodies(ENGINE.world);
-    for (const body of bodies) {
-        const vertices = body.vertices;
+    for (const body of BODIES) {
+        const vertices = body.mBody.vertices;
         const points: number[][] = [];
         for (const vertex of vertices) {
             points.push([vertex.x, vertex.y]);
         }
 
-        drawShape(points, "#ffffff80", true);
+        const colour = (body.colour == undefined) ? "#ffffff80" : body.colour;
+        drawShape(points, colour, true);
+    }
+}
+
+
+//Game setup
+Goal.mWidth = canvasWidth / 2;
+
+let BOTTOM_SCORE = 0;
+let TOP_SCORE = 0;
+const WIN_SCORE = 5;
+
+const UpdateScores = () => {
+    document.getElementById("bottomScore")!.innerText = String(BOTTOM_SCORE);
+    document.getElementById("topScore")!.innerText = String(TOP_SCORE);
+    CheckForWin();
+}
+
+const CheckForWin = () => {
+    if (BOTTOM_SCORE == WIN_SCORE || TOP_SCORE == WIN_SCORE) {
+        GameOver();
     }
 }
 
@@ -61,6 +87,7 @@ const RenderBodies = () => {
 
 
 
+//Listeners
 let [BOTTOM_X, BOTTOM_Y] = [0, -(canvasHeight / 4)]; //information about where the finger is current positioned, always correct
 let [TOP_X, TOP_Y] = [0, canvasHeight / 4];
 const InitListeners = () => {
@@ -86,98 +113,37 @@ const InitListeners = () => {
 
 
 // Objects
-class Paddle {
-    mBody: Matter.Body;
-    static mHeight = 30;
-    static mWidth = 150;
-    static touchOffsetY = 20;
-
-    currentPosition: Vector2D = Vector(0, 0);
-    previousPosition: Vector2D = Vector(0, 0);
-    touchOffset: Vector2D = Vector(0, 0); //usually you want the finger to be behind the paddle, so that the user can still see the paddle
-
-    updatePosition(x: number, y: number) {
-        [this.previousPosition.x, this.previousPosition.y] = [this.currentPosition.x, this.currentPosition.y];
-        [this.currentPosition.x, this.currentPosition.y] = [x + this.touchOffset.x, y + this.touchOffset.y];
-        Matter.Body.set(this.mBody, "position", this.currentPosition);
-    }
-    updateBearing(bearing: number) {
-        Matter.Body.setAngle(this.mBody, toRadians(bearing));
-    }
-
-    checkCOUNTERInteraction() {
-        const collision = Matter.Collision.collides(this.mBody, COUNTER.mBody);
-        if (collision != null) {
-            const [xDamping, yDamping] = [0.2, 1];
-    
-            const travelVector = [(this.currentPosition.x - this.previousPosition.x) * xDamping, (this.currentPosition.y - this.previousPosition.y) * yDamping]; //find travel vector which is currentXY - previousXY
-            const distance = Math.sqrt(travelVector[0]**2 + travelVector[1]**2); //work out speed by using pythagorus on travelVector to find distance, and time is 16ms.
-            const speed = distance / TICK_INTERVAL; //speed unit: pixels/ms
-    
-            let force = 1 * speed**2 * 0.5; //force = (mv^2) / 2
-            if (force > 0.15) {
-                force = 0.15; //to prevent a really powerful hit
-            }
-    
-            const travelVectorNormalized = [travelVector[0] / distance, travelVector[1] / distance]; //calculate force vector, by normalizing travel vector to be of length force 
-            const forceVector = [travelVectorNormalized[0] * force, travelVectorNormalized[1] * force];
-            if (isNaN(forceVector[0]) || isNaN(forceVector[1])) {
-                return;
-            }
-
-            Matter.Body.applyForce(COUNTER.mBody, COUNTER.mBody.position, {x: forceVector[0], y: forceVector[1]});
-        }
-    }
-
-    constructor () {
-        const mBody = Matter.Bodies.rectangle(canvasHeight / 2, 0, Paddle.mWidth, Paddle.mHeight, { isStatic: true }); //just spawn at canvasHeight/2 to stop it from clamping the counter, the position gets reset by the BOTTOM_X etc... anyway as soon as the game starts
-        this.mBody = mBody;
-    }
-}
-
-class Counter {
-    mBody: Matter.Body;
-    static mRadius = 30;
-
-    reset() {
-        if (this.mBody.position.x >= 0) {
-            Matter.Body.set(COUNTER.mBody, "position", Vector(canvasWidth / 4, 0));
-        }
-        else {
-            Matter.Body.set(COUNTER.mBody, "position", Vector(-(canvasWidth / 4), 0));
-        }
-    }
-
-    constructor () {
-        //Matter.Bodies.rectangle(-(canvasWidth / 4), 0, Counter.mRadius * 2, Counter.mRadius * 2)
-        this.mBody = Matter.Bodies.circle(0, 0, Counter.mRadius);
-        this.mBody.restitution = 1;
-        this.mBody.friction = 0;
-        this.mBody.frictionAir = 0.003;
-    }
-}
-
 const BOTTOM_PADDLE = new Paddle();
 const TOP_PADDLE = new Paddle();
-const COUNTER = new Counter();
 BOTTOM_PADDLE.touchOffset.y = Paddle.touchOffsetY;
 TOP_PADDLE.touchOffset.y = -Paddle.touchOffsetY;
-Matter.Composite.add(ENGINE.world, [BOTTOM_PADDLE.mBody, TOP_PADDLE.mBody, COUNTER.mBody]);
+Matter.Composite.add(ENGINE.world, [BOTTOM_PADDLE.mBody, TOP_PADDLE.mBody]);
+
+const COUNTER = new Counter();
+Matter.Composite.add(ENGINE.world, [COUNTER.mBody]);
+
+const BOTTOM_GOAL = new Goal(Vector(0, -(canvasHeight / 2) + (Goal.mHeight / 2)), BOTTOM_COLOUR);
+const TOP_GOAL = new Goal(Vector(0, (canvasHeight / 2) - (Goal.mHeight / 2)), TOP_COLOUR);
+Matter.Composite.add(ENGINE.world, [BOTTOM_GOAL.mBody, TOP_GOAL.mBody]);
 
 
 
 
 
 
-const TICK_INTERVAL = 5;
+
+//Game loop
+const TICK_INTERVAL = 10;
 const Tick = (delta: number) => {
     Matter.Engine.update(ENGINE, delta);
 
     BOTTOM_PADDLE.updatePosition(BOTTOM_X, BOTTOM_Y);
     TOP_PADDLE.updatePosition(TOP_X, TOP_Y);
 
-    BOTTOM_PADDLE.checkCOUNTERInteraction();
-    TOP_PADDLE.checkCOUNTERInteraction();
+    BOTTOM_PADDLE.checkCounterInteraction();
+    TOP_PADDLE.checkCounterInteraction();
+    
+    COUNTER.checkGoalInteraction();
 
     clearCanvas();
     RenderDecorations();
@@ -185,16 +151,29 @@ const Tick = (delta: number) => {
 }
 
 
-
-
-
-
+let GAME_LOOP!: number;
 const MAIN = () => {
+    document.getElementById("gameOver")!.style.display = "none";
+
     InitBorders();
     InitListeners();
 
-    setInterval(() => {
+    GAME_LOOP = setInterval(() => {
         Tick(TICK_INTERVAL);
     }, TICK_INTERVAL);
 }
+
+const GameOver = () => {
+    clearInterval(GAME_LOOP);
+    document.getElementById("gameOver")!.style.display = "block";
+
+    document.getElementById("rematchButton")!.onclick = () => {
+        location.reload();
+    }
+
+    document.getElementById("doneButton")!.onclick = () => {
+        location.href = "/Src/Title/title.html";
+    }
+}
+
 MAIN();
