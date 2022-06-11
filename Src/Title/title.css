@@ -1,0 +1,87 @@
+body {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: black;
+
+    margin: 0;
+    touch-action: none;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+
+    --colour1: #3350d450;
+    --colour2: #ad090950;
+
+    --animationDuration: 10s;
+    --lowerBound: 35%;
+    --upperBound: 65%;
+}
+
+#background {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+#top {
+    height: 100%;
+    width: 100%;
+    background-color: var(--colour2);
+    border-bottom: 1px solid black;
+
+    animation: backgroundAnimationTop var(--animationDuration);
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+#bottom {
+    height: 100%;
+    width: 100%;
+    background-color: var(--colour1);
+
+    animation: backgroundAnimationBottom var(--animationDuration);
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+@keyframes backgroundAnimationTop {
+    from { height: var(--lowerBound); }
+    to { height: var(--upperBound); }
+}
+@keyframes backgroundAnimationBottom {
+    from { height: var(--upperBound); }
+    to { height: var(--lowerBound); }
+}
+
+.gameButton {
+    height: 40px;
+    width: 100%;
+    margin-bottom: 15px;
+
+    background-color: white;
+    border: 1px solid black;
+    font-size: 1.2rem;
+}
+.gameButton:active {
+    background-color: rgb(225, 225, 225);
+}
+.gameButton:last-of-type {
+    margin-bottom: 0;
+}
+
+#wrapper {
+    height: max-content;
+    width: max-content;
+    padding: 20px;
+
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+
+    background-color: white;
+    border: 1px solid black;
+
+    text-align: center;
+}
