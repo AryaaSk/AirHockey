@@ -102,13 +102,13 @@ class Counter extends Body {
         this.mBody = Matter.Bodies.circle(0, 0, Counter.mRadius);
         this.mBody.restitution = 0.9;
         this.mBody.friction = 0;
-        this.mBody.frictionAir = 0.003;
+        this.mBody.frictionAir = 0.02;
     }
 }
 
 
 class Goal extends Body {
-    static mHeight = 20;
+    static mHeight = 10;
     static mWidth = 200;
 
     constructor (position: Vector2D, colour: string) {

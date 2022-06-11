@@ -65,7 +65,7 @@ class Counter extends Body {
         this.mBody = Matter.Bodies.circle(0, 0, Counter.mRadius);
         this.mBody.restitution = 0.9;
         this.mBody.friction = 0;
-        this.mBody.frictionAir = 0.003;
+        this.mBody.frictionAir = 0.02;
     }
     reset() {
         Matter.Body.setAngularVelocity(this.mBody, 0);
@@ -95,5 +95,5 @@ class Goal extends Body {
         this.colour = colour;
     }
 }
-Goal.mHeight = 20;
+Goal.mHeight = 10;
 Goal.mWidth = 200;

@@ -4,7 +4,7 @@ body {
     --upperBound: 65%;
 }
 
-#background {
+#background { /* Just a container for the top and bottom elements */
     position: fixed;
     height: 100%;
     width: 100%;
@@ -29,6 +29,7 @@ body {
     animation-direction: alternate;
     animation-iteration-count: infinite;
 }
+
 @keyframes backgroundAnimationTop {
     from { height: var(--lowerBound); }
     to { height: var(--upperBound); }
@@ -36,36 +37,4 @@ body {
 @keyframes backgroundAnimationBottom {
     from { height: var(--upperBound); }
     to { height: var(--lowerBound); }
-}
-
-#wrapper {
-    height: max-content;
-    width: max-content;
-    padding: 20px;
-
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, calc(-50% - 1.8rem));
-
-    background-color: white;
-    border: 1px solid black;
-
-    text-align: center;
-}
-
-.gameButton {
-    height: 40px;
-    width: 100%;
-    margin-bottom: 15px;
-
-    background-color: white;
-    border: 1px solid black;
-    font-size: 1.2rem;
-}
-.gameButton:active {
-    background-color: rgb(225, 225, 225);
-}
-.gameButton:last-of-type {
-    margin-bottom: 0;
 }

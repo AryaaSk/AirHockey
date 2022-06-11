@@ -25,9 +25,41 @@ body {
     height: 100%; /* This is so I can change the bodies background colour without affecting the red and blue colours due to opacity, in fullscreen PWA mode */
     width: 100%;
     background-color: white;
-    border: 1px solid black;
+    border-top: 1px solid black;
 
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+.menu {
+    position: fixed;
+    height: max-content;
+    width: max-content;
+    padding: 20px;
+
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, calc(-50% - 1.8rem));
+
+    background-color: white;
+    border: 1px solid black;
+
+    text-align: center;
+}
+.menuButton {
+    height: 40px;
+    width: 90%;
+    margin-bottom: 15px;
+
+    background-color: white;
+    border: 1px solid black;
+    font-size: 1.2rem;
+}
+.menuButton:active {
+    background-color: rgb(225, 225, 225);
+}
+.menuButton:last-of-type {
+    margin-bottom: 0;
 }

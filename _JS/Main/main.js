@@ -48,6 +48,9 @@ const RenderBodies = () => {
 };
 //Game setup
 Goal.mWidth = canvasWidth / 2;
+if (isMobile == true) {
+    Paddle.mRadius = 55;
+}
 let BOTTOM_SCORE = 0;
 let TOP_SCORE = 0;
 const WIN_SCORE = 5;
