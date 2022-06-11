@@ -1,30 +1,3 @@
-body {
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    color: black;
-
-    margin: 0;
-    touch-action: none;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                supported by Chrome, Edge, Opera and Firefox */
-
-    background-color: #ad090950;
-}
-#main {
-    height: 100%; /* This is so I can change the bodies background colour without affecting the red and blue colours due to opacity, in fullscreen PWA mode */
-    width: 100%;
-    background-color: white;
-    border: 1px solid black;
-
-    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
-    box-sizing: border-box;         /* Opera/IE 8+ */
-}
-
 #renderingWindow {
     height: 100%;
     width: 100%;
