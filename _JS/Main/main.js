@@ -115,6 +115,12 @@ const MAIN = () => {
 const GameOver = () => {
     clearInterval(GAME_LOOP);
     document.getElementById("gameOver").style.display = "block";
+    if (TOP_SCORE == WIN_SCORE) {
+        document.getElementById("whoWon").innerText = "Red Won";
+    }
+    else {
+        document.getElementById("whoWon").innerText = "Blue Won";
+    }
     document.getElementById("rematchButton").onclick = () => {
         location.reload();
     };
