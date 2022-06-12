@@ -22,6 +22,9 @@ body {
     --colour1Transparent: #3350d450;
     --colour2Transparent: #ad090950;
     background-color: var(--colour2Transparent);
+    
+    --menuColour: #fff9e2;
+    --menuColourActive: #fdf0bd;
 }
 #main {
     height: 100%; /* This is so I can change the bodies background colour without affecting the red and blue colours due to opacity, in fullscreen PWA mode */
@@ -45,7 +48,7 @@ body {
     top: 50%;
     transform: translate(-50%, calc(-50% - 1.8rem));
 
-    background-color: white;
+    background-color: var(--menuColour);
     border: 1px solid black;
 
     text-align: center;
@@ -55,12 +58,12 @@ body {
     width: 90%;
     margin-bottom: 15px;
 
-    background-color: white;
+    background-color: var(--menuColour);
     border: 1px solid black;
     font-size: 1.2rem;
 }
 .menuButton:active {
-    background-color: rgb(225, 225, 225);
+    background-color: var(--menuColourActive);
 }
 .menuButton:last-of-type {
     margin-bottom: 0;

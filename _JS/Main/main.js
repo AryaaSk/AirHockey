@@ -25,21 +25,22 @@ const RenderDecorations = () => {
     drawLine([-(canvasWidth / 2), 0], [canvasWidth / 2, 0], "black");
     //get counter's velocity and draw a trail
     //since the velocity is just a vector, we can just that to calculate the 2 points to draw the line, this also takes into account its magnitude so I dont have to scale them myself
-    if (COUNTER.mBody.speed > 5) {
+    if (COUNTER.mBody.speed > 10) {
         let colour = "rgb(150, 150, 150)"; //"rgb(85, 77, 88)";
-        if (COUNTER.mBody.speed > 10) {
+        if (COUNTER.mBody.speed > 15) {
             colour = "rgb(120, 120, 120)"; //"#7542f5";
         }
-        if (COUNTER.mBody.speed > 25) {
+        if (COUNTER.mBody.speed > 20) {
             colour = "rgb(80, 80, 80)"; //"purple";
         }
-        let thickness = 1 + (0.5 * COUNTER.mBody.speed);
+        let thickness = 1 + (0.2 * COUNTER.mBody.speed);
         if (thickness > 10) {
             thickness = 10;
         }
+        const trailLength = (COUNTER.mBody.speed * 6) - 50; //we also need to factor in the counter's speed, when the speed is 10, we want the trail to be 10, when the speed is 25, we want the trail to be 100
         const normalized = Matter.Vector.normalise(COUNTER.mBody.velocity); //work out normalized vector, then scale it back perfectly to fit behind the counter
         const point1Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(normalized, -(Counter.mRadius)));
-        const point2Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(normalized, -(Counter.mRadius * COUNTER.mBody.speed * 0.15)));
+        const point2Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(normalized, -(Counter.mRadius + trailLength)));
         drawLine([point1Vector.x, point1Vector.y], [point2Vector.x, point2Vector.y], colour, thickness);
         //to draw extra lines we just find the perpendicular vector to the direction vector, normalize it and then add our offset
         const perpendicularNormalized = Vector(normalized.y, normalized.x);
@@ -102,7 +103,7 @@ let [BOTTOM_X, BOTTOM_Y] = [0, -(canvasHeight / 4)]; //information about where t
 let [TOP_X, TOP_Y] = [0, canvasHeight / 4];
 const InitListeners = () => {
     if (isMobile == true) {
-        document.getElementById("renderingWindow").addEventListener('touchmove', ($e) => {
+        document.getElementById("renderingWindow").ontouchmove = ($e) => {
             //Read this to understand about JS touch events - https://stackoverflow.com/questions/7056026/variation-of-e-touches-e-targettouches-and-e-changedtouches
             const targetTouches = $e.targetTouches;
             for (const touch of targetTouches) {
@@ -124,7 +125,7 @@ const InitListeners = () => {
                     }
                 }
             }
-        });
+        };
     }
     else {
         document.onkeydown = ($e) => {
@@ -139,6 +140,21 @@ const InitListeners = () => {
                 KEYS_DOWN.splice(KEYS_DOWN.indexOf(key), 1);
             }
         };
+        let mouseDown = false;
+        if (NUM_PLAYERS == 1) {
+            document.getElementById("renderingWindow").onmousedown = () => {
+                mouseDown = true;
+            };
+            document.getElementById("renderingWindow").onmouseup = () => {
+                mouseDown = false;
+            };
+            document.getElementById("renderingWindow").onmousemove = ($e) => {
+                if (mouseDown == false) {
+                    return;
+                }
+                [BOTTOM_X, BOTTOM_Y] = [GridX($e.clientX), GridY($e.clientY)];
+            };
+        }
     }
 };
 const HandleKeys = () => {

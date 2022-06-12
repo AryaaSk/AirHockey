@@ -15,7 +15,7 @@ class Paddle extends Body{
     static mRadius = 1; //set dynamically
     static touchOffsetY = 20;
     static moveSpeed = 20;
-    static AISpeed = 12.5;
+    static AISpeed = 15;
 
     currentPosition: Vector2D = Vector(0, 0);
     previousPosition: Vector2D = Vector(0, 0);
@@ -123,6 +123,7 @@ class Counter extends Body {
     constructor () {
         super();
         this.mBody = Matter.Bodies.circle(0, 0, Counter.mRadius);
+        Matter.Body.setMass(this.mBody, 4.374988784);
         this.mBody.restitution = 0.9;
         this.mBody.friction = 0;
         this.mBody.frictionAir = 0.02;
