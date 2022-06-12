@@ -105,7 +105,7 @@ Counter.mRadius = Paddle.mRadius * 0.75;
 Counter.speedLimit = (canvasHeight * canvasWidth / 328770) * 20; //the speed limit increases on bigger screens
 
 if (isMobile == true) {
-    Paddle.AISpeed = 10;
+    Paddle.AISpeed = 8;
 }
 
 const urlParams = new URLSearchParams(window.location.search);
