@@ -19,7 +19,9 @@ body {
     --colour1: #3350d4;
     --colour2: #ad0909;
 
-    background-color: var(--colour2);
+    --colour1Transparent: #3350d450;
+    --colour2Transparent: #ad090950;
+    background-color: var(--colour2Transparent);
 }
 #main {
     height: 100%; /* This is so I can change the bodies background colour without affecting the red and blue colours due to opacity, in fullscreen PWA mode */

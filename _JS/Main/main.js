@@ -74,7 +74,7 @@ const RenderBodies = () => {
 //Game setup
 Goal.mWidth = (200 > canvasWidth / 3) ? 200 : canvasWidth / 3; //min goal width is 200px
 if (isMobile == true) {
-    Paddle.mRadius = 55;
+    Paddle.mRadius = 45;
 }
 const urlParams = new URLSearchParams(window.location.search);
 const NUM_PLAYERS = Number(urlParams.get('players'));

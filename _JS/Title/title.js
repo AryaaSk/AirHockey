@@ -1,10 +1,4 @@
 "use strict";
-const UpdateColours = () => {
-    const bottomColour = getComputedStyle(document.body).getPropertyValue('--colour1');
-    const topColour = getComputedStyle(document.body).getPropertyValue('--colour2');
-    document.body.style.setProperty('--colour1Transparent', bottomColour + "50");
-    document.body.style.setProperty('--colour2Transparent', topColour + "50");
-};
 const InitButtonListeners = () => {
     document.getElementById("playButton1Player").onclick = () => {
         location.href = "/Src/Main/main.html?players=1";
@@ -17,7 +11,6 @@ const InitButtonListeners = () => {
     };
 };
 const MAIN_TITLE = () => {
-    UpdateColours();
     InitButtonListeners();
     if (window.matchMedia('(display-mode: fullscreen)').matches) {
         document.getElementById("installButton").style.display = "none";
