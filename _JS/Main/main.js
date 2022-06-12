@@ -75,8 +75,8 @@ const RenderBodies = () => {
 //Game setup
 Goal.mWidth = (200 > canvasWidth / 3) ? 200 : canvasWidth / 3; //min goal width is 200px
 Paddle.mRadius = Goal.mWidth / 4;
-if (Paddle.mRadius > 100) {
-    Paddle.mRadius = 100;
+if (Paddle.mRadius > 80) {
+    Paddle.mRadius = 80;
 }
 Counter.mRadius = Paddle.mRadius * 0.75;
 Counter.speedLimit = (canvasHeight * canvasWidth / 328770) * 20; //the speed limit increases on bigger screens
@@ -239,6 +239,8 @@ const BOTTOM_PADDLE = new Paddle(Vector(0, -(canvasHeight / 4)));
 const TOP_PADDLE = new Paddle(Vector(0, canvasHeight / 4));
 BOTTOM_PADDLE.touchOffset.y = Paddle.touchOffsetY;
 TOP_PADDLE.touchOffset.y = -Paddle.touchOffsetY;
+BOTTOM_PADDLE.colour = BOTTOM_COLOUR + "80";
+TOP_PADDLE.colour = TOP_COLOUR + "80";
 Matter.Composite.add(ENGINE.world, [BOTTOM_PADDLE.mBody, TOP_PADDLE.mBody]);
 const COUNTER = new Counter();
 Matter.Composite.add(ENGINE.world, [COUNTER.mBody]);

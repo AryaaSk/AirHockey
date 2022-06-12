@@ -13,7 +13,7 @@ class Paddle extends Body {
         this.currentPosition = Vector(0, 0);
         this.previousPosition = Vector(0, 0);
         this.touchOffset = Vector(0, 0); //usually you want the finger to be behind the paddle, so that the user can still see the paddle
-        const mBody = Matter.Bodies.circle(position.x, position.y, Paddle.mRadius, { isStatic: true }); //just spawn at canvasHeight/2 to stop it from clamping the counter, the position gets reset by the BOTTOM_X etc... anyway as soon as the game starts
+        const mBody = Matter.Bodies.circle(position.x, position.y, Paddle.mRadius, { isStatic: true });
         this.mBody = mBody;
         this.mBody.friction = 0;
         this.mBody.frictionAir = 0;

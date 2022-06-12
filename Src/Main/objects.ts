@@ -66,7 +66,7 @@ class Paddle extends Body{
 
     constructor (position: Vector2D) {
         super();
-        const mBody = Matter.Bodies.circle(position.x, position.y, Paddle.mRadius, { isStatic: true }); //just spawn at canvasHeight/2 to stop it from clamping the counter, the position gets reset by the BOTTOM_X etc... anyway as soon as the game starts
+        const mBody = Matter.Bodies.circle(position.x, position.y, Paddle.mRadius, { isStatic: true });
         this.mBody = mBody;
         this.mBody.friction = 0;
         this.mBody.frictionAir = 0;
