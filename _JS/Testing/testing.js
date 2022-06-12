@@ -10,17 +10,18 @@
     let ground = Matter.Bodies.rectangle(0, 0, 1000, 50, { isStatic: true });
     // add all of the bodies to the world
     Matter.Composite.add(ENGINE.world, [box, ground]);
-    linkCanvas("renderingWindow");
+    const canvas = new Canvas();
+    canvas.linkCanvas("renderingWindow");
     const wallThickness = 1;
-    const topWall = Matter.Bodies.rectangle(0, canvasHeight / 2, canvasWidth, wallThickness, { isStatic: true });
-    const bottomWall = Matter.Bodies.rectangle(0, -(canvasHeight / 2), canvasWidth, wallThickness, { isStatic: true });
-    const leftWall = Matter.Bodies.rectangle(-(canvasWidth / 2), 0, wallThickness, canvasHeight, { isStatic: true });
-    const rightWall = Matter.Bodies.rectangle(canvasWidth / 2, 0, wallThickness, canvasHeight, { isStatic: true });
+    const topWall = Matter.Bodies.rectangle(0, canvas.canvasHeight / 2, canvas.canvasWidth, wallThickness, { isStatic: true });
+    const bottomWall = Matter.Bodies.rectangle(0, -(canvas.canvasHeight / 2), canvas.canvasWidth, wallThickness, { isStatic: true });
+    const leftWall = Matter.Bodies.rectangle(-(canvas.canvasWidth / 2), 0, wallThickness, canvas.canvasHeight, { isStatic: true });
+    const rightWall = Matter.Bodies.rectangle(canvas.canvasWidth / 2, 0, wallThickness, canvas.canvasHeight, { isStatic: true });
     Matter.Composite.add(ENGINE.world, [topWall, bottomWall, leftWall, rightWall]);
     let [mouseX, mouseY] = [0, 0]; //these are always correct at any point in time
     const InitListeners = () => {
         document.getElementById("renderingWindow").onmousemove = ($e) => {
-            [mouseX, mouseY] = [GridX($e.clientX), GridY($e.clientY)];
+            [mouseX, mouseY] = [canvas.GridX($e.clientX), canvas.GridY($e.clientY)];
         };
     };
     const RenderBodies = () => {
@@ -30,11 +31,11 @@
             let a = 0;
             while (a != vertices.length - 1) {
                 const [point1, point2] = [[vertices[a].x, vertices[a].y], [vertices[a + 1].x, vertices[a + 1].y]];
-                drawLine(point1, point2, "black", 2);
+                canvas.drawLine(point1, point2, "black", 2);
                 a += 1;
             }
             const [point1, point2] = [[vertices[a].x, vertices[a].y], [vertices[0].x, vertices[0].y]]; //final line
-            drawLine(point1, point2, "black", 2);
+            canvas.drawLine(point1, point2, "black", 2);
         }
     };
     let [previousX, previousY] = [0, 0];
@@ -46,7 +47,7 @@
             [currentX, currentY] = [mouseX, mouseY];
             Matter.Body.set(ground, "position", { x: mouseX, y: mouseY }); //update grounds position to the mouse's position
             CheckForInteraction();
-            clearCanvas();
+            canvas.clearCanvas();
             RenderBodies();
         }, 16);
     };

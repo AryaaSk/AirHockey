@@ -1,7 +1,5 @@
 "use strict";
 const BODIES = [];
-let BOTTOM_COLOUR = "#3350d4";
-let TOP_COLOUR = "#ad0909";
 class Body {
     constructor() {
         BODIES.push(this);
@@ -100,10 +98,10 @@ class Counter extends Body {
     }
     checkOutOfBounds() {
         const position = this.mBody.position;
-        const top = position.y > (canvasHeight / 2) + Counter.mRadius;
-        const bottom = position.y < -(canvasHeight / 2) - Counter.mRadius;
-        const left = position.x < -(canvasWidth / 2) - Counter.mRadius;
-        const right = position.x > canvasWidth / 2 + Counter.mRadius;
+        const top = position.y > (canvas.canvasHeight / 2) + Counter.mRadius;
+        const bottom = position.y < -(canvas.canvasHeight / 2) - Counter.mRadius;
+        const left = position.x < -(canvas.canvasWidth / 2) - Counter.mRadius;
+        const right = position.x > canvas.canvasWidth / 2 + Counter.mRadius;
         if (top || bottom || left || right) {
             this.reset();
         }
