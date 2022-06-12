@@ -16,8 +16,8 @@ body {
             user-select: none; /* Non-prefixed version, currently
                                 supported by Chrome, Edge, Opera and Firefox */
 
-    --colour1: #3350d450;
-    --colour2: #ad090950;
+    --colour1: #3350d4;
+    --colour2: #ad0909;
 
     background-color: var(--colour2);
 }

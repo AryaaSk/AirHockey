@@ -1,4 +1,5 @@
 //Setup
+
 //Extra helpers
 interface Vector2D {
     x: number
@@ -32,6 +33,34 @@ const RenderDecorations = () => {
     ], TOP_COLOUR + "50");
 
     drawLine([-(canvasWidth / 2), 0], [canvasWidth / 2, 0], "black");
+
+    //get counter's velocity and draw a trail
+    //since the velocity is just a vector, we can just that to calculate the 2 points to draw the line, this also takes into account its magnitude so I dont have to scale them myself
+    if (COUNTER.mBody.speed > 5) {
+        let colour = "rgb(85, 77, 88)";
+        if (COUNTER.mBody.speed > 30) {
+            colour = "#7542f5";
+        }
+        if (COUNTER.mBody.speed > 40) {
+            colour = "purple";
+        }
+        let thickness = 1 + (0.2 * COUNTER.mBody.speed);
+        if (thickness > 10) {
+            thickness = 10;
+        }
+
+        const normalized = Matter.Vector.normalise(COUNTER.mBody.velocity); //work out normalized vector, then scale it back perfectly to fit behind the counter
+        const point1Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(normalized, -(Counter.mRadius + 5)));
+        const point2Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(COUNTER.mBody.velocity, -5));
+        drawLine([point1Vector.x, point1Vector.y], [point2Vector.x, point2Vector.y], colour, thickness);
+
+        //to draw extra lines we just find the perpendicular vector to the direction vector, normalize it and then add our offset
+        const perpendicularNormalized = Vector(normalized.y, normalized.x);
+        const scale = 10;
+
+        drawLine([point1Vector.x + (scale * perpendicularNormalized.x), point1Vector.y + (scale * perpendicularNormalized.y)], [point2Vector.x + (scale / 5 * perpendicularNormalized.x), point2Vector.y + (scale / 5 * perpendicularNormalized.y)], colour, thickness); //can create a cool effect by adding more lines
+        drawLine([point1Vector.x - (scale * perpendicularNormalized.x), point1Vector.y - (scale * perpendicularNormalized.y)], [point2Vector.x - (scale / 5 * perpendicularNormalized.x), point2Vector.y - (scale / 5 * perpendicularNormalized.y)], colour, thickness);
+    }
 }
 
 
@@ -40,7 +69,7 @@ const ENGINE = Matter.Engine.create();
 ENGINE.gravity.y = 0; //no gravity since players just hit it
 
 const InitBorders = () => {
-    const borderThickness = 50;
+    const borderThickness = 100;
     const topWall = Matter.Bodies.rectangle(0, (canvasHeight / 2) + (borderThickness / 2), canvasWidth, borderThickness, { isStatic: true });
     const bottomWall = Matter.Bodies.rectangle(0, (-(canvasHeight / 2)) - (borderThickness / 2), canvasWidth, borderThickness, { isStatic: true });
     const leftWall = Matter.Bodies.rectangle((-(canvasWidth / 2)) - (borderThickness / 2), 0, borderThickness, canvasHeight, { isStatic: true });
@@ -58,17 +87,21 @@ const RenderBodies = () => {
             points.push([vertex.x, vertex.y]);
         }
 
-        const colour = (body.colour == undefined) ? "#ffffff80" : body.colour;
+        const colour = (body.colour == undefined) ? "#ffffff60" : body.colour;
         drawShape(points, colour, true);
     }
 }
 
 
 //Game setup
-Goal.mWidth = canvasWidth / 2;
+Goal.mWidth = (200 > canvasWidth / 3) ? 200 : canvasWidth / 3; //min goal width is 200px
+
 if (isMobile == true) {
     Paddle.mRadius = 55;
 }
+
+BOTTOM_COLOUR = getComputedStyle(document.body).getPropertyValue('--colour1');
+TOP_COLOUR = getComputedStyle(document.body).getPropertyValue('--colour2');
 
 let BOTTOM_SCORE = 0;
 let TOP_SCORE = 0;

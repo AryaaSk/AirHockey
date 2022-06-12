@@ -1,7 +1,7 @@
 "use strict";
 const BODIES = [];
-const BOTTOM_COLOUR = "#3350d4";
-const TOP_COLOUR = "#ad0909";
+let BOTTOM_COLOUR = "#3350d4";
+let TOP_COLOUR = "#ad0909";
 class Body {
     constructor() {
         BODIES.push(this);
