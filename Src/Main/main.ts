@@ -169,22 +169,22 @@ const HandleKeys = () => {
     for (const key of KEYS_DOWN) {
         switch (key) {
             case "w":
-                if (TOP_Y <= canvasHeight / 2 - Paddle.mRadius + Paddle.touchOffsetY / 2) {
+                if (TOP_Y <= canvasHeight / 2 - Paddle.mRadius + Paddle.touchOffsetY / 2 && NUM_PLAYERS == 2) {
                     TOP_Y += Paddle.moveSpeed;
                 }
                 break;
             case "a":
-                if (TOP_X >= -(canvasWidth / 2) + Paddle.mRadius) {
+                if (TOP_X >= -(canvasWidth / 2) + Paddle.mRadius && NUM_PLAYERS == 2) {
                     TOP_X -= Paddle.moveSpeed;
                 }
                 break;
             case "s":
-                if (TOP_Y >= 0 + Paddle.mRadius + Paddle.touchOffsetY) {
+                if (TOP_Y >= 0 + Paddle.mRadius + Paddle.touchOffsetY && NUM_PLAYERS == 2) {
                     TOP_Y -= Paddle.moveSpeed;
                 }
                 break;
             case "d":
-                if (TOP_X <= canvasWidth / 2 - Paddle.mRadius) {
+                if (TOP_X <= canvasWidth / 2 - Paddle.mRadius && NUM_PLAYERS == 2) {
                     TOP_X += Paddle.moveSpeed;
                 }
                 break;

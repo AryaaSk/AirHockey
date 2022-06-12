@@ -45,6 +45,8 @@ There is also a single player option, where you control the bottom paddle and an
 
 ![AI Gif](Previews/AIDemo.gif?raw=true)
 
+One problem I am having with the bot is that sometimes it starts following the counter, but then just clamps it into the wall and then there is no way to get the ball back. One solution to this problem may be to check if the counter is near an edge, if so then go towards it from the other side.
+
 ## Design
 Here is the original sketch of before doing any work:\
 ![Sketch](Previews/Sketch.png?raw=true)\
