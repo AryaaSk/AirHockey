@@ -58,7 +58,7 @@ class Paddle extends Body {
 }
 Paddle.mRadius = 75;
 Paddle.touchOffsetY = 20;
-Paddle.moveSpeed = 10;
+Paddle.moveSpeed = 20;
 class Counter extends Body {
     constructor() {
         super();

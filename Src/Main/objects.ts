@@ -14,7 +14,7 @@ class Body {
 class Paddle extends Body{
     static mRadius = 75;
     static touchOffsetY = 20;
-    static moveSpeed = 10;
+    static moveSpeed = 20;
 
     currentPosition: Vector2D = Vector(0, 0);
     previousPosition: Vector2D = Vector(0, 0);

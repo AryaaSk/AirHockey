@@ -52,7 +52,7 @@ const RenderDecorations = () => {
 const ENGINE = Matter.Engine.create();
 ENGINE.gravity.y = 0; //no gravity since players just hit it
 const InitBorders = () => {
-    const borderThickness = 100;
+    const borderThickness = 200;
     const topWall = Matter.Bodies.rectangle(0, (canvasHeight / 2) + (borderThickness / 2), canvasWidth, borderThickness, { isStatic: true });
     const bottomWall = Matter.Bodies.rectangle(0, (-(canvasHeight / 2)) - (borderThickness / 2), canvasWidth, borderThickness, { isStatic: true });
     const leftWall = Matter.Bodies.rectangle((-(canvasWidth / 2)) - (borderThickness / 2), 0, borderThickness, canvasHeight, { isStatic: true });
@@ -76,6 +76,8 @@ Goal.mWidth = (200 > canvasWidth / 3) ? 200 : canvasWidth / 3; //min goal width 
 if (isMobile == true) {
     Paddle.mRadius = 55;
 }
+const urlParams = new URLSearchParams(window.location.search);
+const NUM_PLAYERS = Number(urlParams.get('players'));
 BOTTOM_COLOUR = getComputedStyle(document.body).getPropertyValue('--colour1');
 TOP_COLOUR = getComputedStyle(document.body).getPropertyValue('--colour2');
 let BOTTOM_SCORE = 0;
@@ -102,18 +104,21 @@ const InitListeners = () => {
             const targetTouches = $e.targetTouches;
             for (const touch of targetTouches) {
                 const touchY = GridY(touch.clientY);
-                if (touchY < (0 - (Paddle.mRadius) - Paddle.touchOffsetY)) { //halfline - halfRacquetHeight
-                    [BOTTOM_X, BOTTOM_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+                if (touchY < 0) { //halfline - halfRacquetHeight
+                    if (touchY < (0 - (Paddle.mRadius) - Paddle.touchOffsetY)) {
+                        [BOTTOM_X, BOTTOM_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+                    }
+                    else {
+                        [BOTTOM_X, BOTTOM_Y] = [GridX(touch.clientX), -1 - (Paddle.mRadius) - Paddle.touchOffsetY];
+                    }
                 }
-                else if (touchY > (0 + (Paddle.mRadius) + Paddle.touchOffsetY)) {
-                    [TOP_X, TOP_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
-                }
-                //handling the touches in the middle of the board
-                else if (touchY < 0) {
-                    [BOTTOM_X, BOTTOM_Y] = [GridX(touch.clientX), -1 - (Paddle.mRadius) - Paddle.touchOffsetY];
-                }
-                else if (touchY > 0) {
-                    [TOP_X, TOP_Y] = [GridX(touch.clientX), 1 + (Paddle.mRadius) + Paddle.touchOffsetY];
+                else if (touchY > 0 && NUM_PLAYERS == 2) { //dont want the player to be able to control top when it is against the AI
+                    if (touchY > (0 + (Paddle.mRadius) + Paddle.touchOffsetY)) {
+                        [TOP_X, TOP_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+                    }
+                    else {
+                        [TOP_X, TOP_Y] = [GridX(touch.clientX), 1 + (Paddle.mRadius) + Paddle.touchOffsetY];
+                    }
                 }
             }
         });
@@ -181,6 +186,28 @@ const HandleKeys = () => {
         }
     }
 };
+const TickAI = () => {
+    //AI controls top paddle, every tick it will try and go towards the paddle
+    if (COUNTER.mBody.position.y < 0) {
+        return; //only go for it when it is on its own side
+    }
+    const AICounterVector = Matter.Vector.sub(Vector(COUNTER.mBody.position.x, COUNTER.mBody.position.y + Counter.mRadius * 2), Vector(TOP_X, TOP_Y));
+    const normalized = Matter.Vector.normalise(AICounterVector);
+    TOP_X += normalized.x * Paddle.moveSpeed;
+    TOP_Y += normalized.y * Paddle.moveSpeed;
+    if (TOP_X < -(canvasWidth / 2)) {
+        TOP_X = -(canvasWidth / 2);
+    }
+    else if (TOP_X > canvasWidth / 2) {
+        TOP_X = canvasWidth / 2;
+    }
+    if (TOP_Y < 0 + (Paddle.mRadius) + Paddle.touchOffsetY) {
+        TOP_Y = 0 + (Paddle.mRadius) + Paddle.touchOffsetY;
+    }
+    else if (TOP_Y > canvasHeight / 2) {
+        TOP_Y = canvasHeight / 2;
+    }
+};
 // Objects
 const BOTTOM_PADDLE = new Paddle(Vector(0, -(canvasHeight / 4)));
 const TOP_PADDLE = new Paddle(Vector(0, canvasHeight / 4));
@@ -198,6 +225,9 @@ const Tick = (delta) => {
     Matter.Engine.update(ENGINE, delta);
     if (isMobile == false) {
         HandleKeys();
+    }
+    if (NUM_PLAYERS == 1) {
+        TickAI();
     }
     BOTTOM_PADDLE.updatePosition(BOTTOM_X, BOTTOM_Y);
     TOP_PADDLE.updatePosition(TOP_X, TOP_Y);

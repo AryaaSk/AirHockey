@@ -40,7 +40,12 @@ I also check if either of the paddles have collided with the counter, if so then
 
 Then I also check for a collision between the counter and either of the goals, if there is a collision then I add 1 point to the opposing player's score, and reset the counter. The first person to reach a score of 5 wins.
 
-Here is the original sketch of before doing any work:\
-![Sketch](Previews/Sketch.png?raw=true)
+### AI
+There is also a single player option, where you control the bottom paddle and an AI controls the top. In reality it is not using any AI at all, it just finds the Vector from Paddle -> Counter, then normalizes it, then scales it by the Paddle's move speed, and finally just translates its position based on this vector. Although it is very simple, it does produce some decent gameplay, where the bot is actually able to hold a rally:
 
+![AI Gif](Previews/AIDemo.gif?raw=true)
+
+## Design
+Here is the original sketch of before doing any work:\
+![Sketch](Previews/Sketch.png?raw=true)\
 *This was originally going to be a badminton game, which is why there is a sketch of a badminton game in the Previews as well.*
