@@ -26,16 +26,16 @@ const RenderDecorations = () => {
     //get counter's velocity and draw a trail
     //since the velocity is just a vector, we can just that to calculate the 2 points to draw the line, this also takes into account its magnitude so I dont have to scale them myself
     if (COUNTER.mBody.speed > 5) {
-        let colour = "rgb(85, 77, 88)";
+        let colour = "rgb(120, 120, 120)"; //"rgb(85, 77, 88)";
         if (COUNTER.mBody.speed > 30) {
-            colour = "#7542f5";
+            colour = "rgb(80, 80, 80)"; //"#7542f5";
         }
         if (COUNTER.mBody.speed > 40) {
-            colour = "purple";
+            colour = "rgb(40, 40, 40)"; //"purple";
         }
         let thickness = 1 + (0.2 * COUNTER.mBody.speed);
-        if (thickness > 10) {
-            thickness = 10;
+        if (thickness > 6) {
+            thickness = 6;
         }
         const normalized = Matter.Vector.normalise(COUNTER.mBody.velocity); //work out normalized vector, then scale it back perfectly to fit behind the counter
         const point1Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(normalized, -(Counter.mRadius + 5)));
@@ -107,6 +107,13 @@ const InitListeners = () => {
                 }
                 else if (touchY > (0 + (Paddle.mRadius) + Paddle.touchOffsetY)) {
                     [TOP_X, TOP_Y] = [GridX(touch.clientX), GridY(touch.clientY)];
+                }
+                //handling the touches in the middle of the board
+                else if (touchY < 0) {
+                    [BOTTOM_X, BOTTOM_Y] = [GridX(touch.clientX), -1 - (Paddle.mRadius) - Paddle.touchOffsetY];
+                }
+                else if (touchY > 0) {
+                    [TOP_X, TOP_Y] = [GridX(touch.clientX), 1 + (Paddle.mRadius) + Paddle.touchOffsetY];
                 }
             }
         });
