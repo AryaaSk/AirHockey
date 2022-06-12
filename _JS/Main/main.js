@@ -81,7 +81,7 @@ if (Paddle.mRadius > 100) {
 Counter.mRadius = Paddle.mRadius * 0.75;
 Counter.speedLimit = (canvasHeight * canvasWidth / 328770) * 20; //the speed limit increases on bigger screens
 if (isMobile == true) {
-    Paddle.AISpeed = 8;
+    Paddle.AISpeed = 10;
 }
 const urlParams = new URLSearchParams(window.location.search);
 const NUM_PLAYERS = Number(urlParams.get('players'));
