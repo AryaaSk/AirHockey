@@ -26,24 +26,24 @@ const RenderDecorations = () => {
     //get counter's velocity and draw a trail
     //since the velocity is just a vector, we can just that to calculate the 2 points to draw the line, this also takes into account its magnitude so I dont have to scale them myself
     if (COUNTER.mBody.speed > 5) {
-        let colour = "rgb(120, 120, 120)"; //"rgb(85, 77, 88)";
-        if (COUNTER.mBody.speed > 30) {
-            colour = "rgb(80, 80, 80)"; //"#7542f5";
+        let colour = "rgb(150, 150, 150)"; //"rgb(85, 77, 88)";
+        if (COUNTER.mBody.speed > 10) {
+            colour = "rgb(120, 120, 120)"; //"#7542f5";
         }
-        if (COUNTER.mBody.speed > 40) {
-            colour = "rgb(40, 40, 40)"; //"purple";
+        if (COUNTER.mBody.speed > 25) {
+            colour = "rgb(80, 80, 80)"; //"purple";
         }
-        let thickness = 1 + (0.2 * COUNTER.mBody.speed);
-        if (thickness > 6) {
-            thickness = 6;
+        let thickness = 1 + (0.5 * COUNTER.mBody.speed);
+        if (thickness > 10) {
+            thickness = 10;
         }
         const normalized = Matter.Vector.normalise(COUNTER.mBody.velocity); //work out normalized vector, then scale it back perfectly to fit behind the counter
-        const point1Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(normalized, -(Counter.mRadius + 5)));
-        const point2Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(COUNTER.mBody.velocity, -5));
+        const point1Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(normalized, -(Counter.mRadius)));
+        const point2Vector = Matter.Vector.add(COUNTER.mBody.position, Matter.Vector.mult(normalized, -(Counter.mRadius * COUNTER.mBody.speed * 0.15)));
         drawLine([point1Vector.x, point1Vector.y], [point2Vector.x, point2Vector.y], colour, thickness);
         //to draw extra lines we just find the perpendicular vector to the direction vector, normalize it and then add our offset
         const perpendicularNormalized = Vector(normalized.y, normalized.x);
-        const scale = 10;
+        const scale = 20;
         drawLine([point1Vector.x + (scale * perpendicularNormalized.x), point1Vector.y + (scale * perpendicularNormalized.y)], [point2Vector.x + (scale / 5 * perpendicularNormalized.x), point2Vector.y + (scale / 5 * perpendicularNormalized.y)], colour, thickness); //can create a cool effect by adding more lines
         drawLine([point1Vector.x - (scale * perpendicularNormalized.x), point1Vector.y - (scale * perpendicularNormalized.y)], [point2Vector.x - (scale / 5 * perpendicularNormalized.x), point2Vector.y - (scale / 5 * perpendicularNormalized.y)], colour, thickness);
     }
@@ -73,9 +73,12 @@ const RenderBodies = () => {
 };
 //Game setup
 Goal.mWidth = (200 > canvasWidth / 3) ? 200 : canvasWidth / 3; //min goal width is 200px
-if (isMobile == true) {
-    Paddle.mRadius = 45;
+Paddle.mRadius = Goal.mWidth / 4;
+if (Paddle.mRadius > 100) {
+    Paddle.mRadius = 100;
 }
+Counter.mRadius = Paddle.mRadius * 0.75;
+Counter.speedLimit = (canvasHeight * canvasWidth / 328770) * 20; //the speed limit increases on bigger screens
 const urlParams = new URLSearchParams(window.location.search);
 const NUM_PLAYERS = Number(urlParams.get('players'));
 BOTTOM_COLOUR = getComputedStyle(document.body).getPropertyValue('--colour1');
@@ -186,13 +189,19 @@ const HandleKeys = () => {
         }
     }
 };
+const normalize = (vec) => {
+    const magnitude = Matter.Vector.magnitude(vec);
+    const normalized = Matter.Vector.mult(vec, 1 / magnitude);
+    return normalized;
+};
 const TickAI = () => {
     //AI controls top paddle, every tick it will try and go towards the paddle
-    const AICounterVector = (COUNTER.mBody.position.y < 0) ? Matter.Vector.sub(Vector(COUNTER.mBody.position.x, COUNTER.mBody.position.y + Counter.mRadius * 2 + canvasHeight / 4), Vector(TOP_X, TOP_Y)) : Matter.Vector.sub(Vector(COUNTER.mBody.position.x, COUNTER.mBody.position.y + Counter.mRadius * 2), Vector(TOP_X, TOP_Y)); //adding canvasheight/4 to simulate prediction
-    const normalized = Matter.Vector.normalise(AICounterVector);
-    const moveSpeed = (COUNTER.mBody.position.y < 0) ? Paddle.moveSpeed / 2 : Paddle.moveSpeed;
-    TOP_X += normalized.x * moveSpeed;
-    TOP_Y += normalized.y * moveSpeed;
+    const CounterPosition = Vector(COUNTER.mBody.position.x, COUNTER.mBody.position.y);
+    const AICounterVector = (CounterPosition.y < 0) ? Matter.Vector.sub(Vector(CounterPosition.x, CounterPosition.y + Counter.mRadius * 2 + canvasHeight / 4), Vector(TOP_X, TOP_Y)) : Matter.Vector.sub(Vector(CounterPosition.x, CounterPosition.y + Counter.mRadius * 2), Vector(TOP_X, TOP_Y)); //adding canvasheight/4 to simulate prediction
+    const normalized = normalize(AICounterVector);
+    const moveSpeed = (CounterPosition.y < 0) ? Paddle.AISpeed / 2 : Paddle.AISpeed;
+    TOP_X += Math.round(normalized.x * moveSpeed); //for some reason the normalized.x, and normalized.y keep switching between positive and negative even when the counter is idle
+    TOP_Y += Math.round(normalized.y * moveSpeed);
     if (TOP_X < -(canvasWidth / 2)) {
         TOP_X = -(canvasWidth / 2);
     }
@@ -231,7 +240,9 @@ const Tick = (delta) => {
     TOP_PADDLE.updatePosition(TOP_X, TOP_Y);
     BOTTOM_PADDLE.checkCounterInteraction();
     TOP_PADDLE.checkCounterInteraction();
+    COUNTER.limitSpeed();
     COUNTER.checkGoalInteraction();
+    COUNTER.checkOutOfBounds();
     clearCanvas();
     RenderDecorations();
     RenderBodies();

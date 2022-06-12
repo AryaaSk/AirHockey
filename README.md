@@ -51,3 +51,10 @@ One problem I am having with the bot is that sometimes it starts following the c
 Here is the original sketch of before doing any work:\
 ![Sketch](Previews/Sketch.png?raw=true)\
 *This was originally going to be a badminton game, which is why there is a sketch of a badminton game in the Previews as well.*
+
+## Difficulties
+I had a few difficulties with this project:
+- The design does not look very appealing, although I tried to make the game look old fashioned, it does not make it seem any more appealing. Although this was bad it is also a good thing, since it allowed me to learn about different website styles.
+- Inconsitent constants, there were many constants involved in the physics side, such as the friction and max-speed of the counter, as well as the x/y damping on the paddles. I had to tweak them a lot and I ended up adding a lot more other constants, it started to become very complex as if I changed one constant it would alter how another one would behave. There were also a lot of problems due to the different screen sizes of mobile and pc, the game feels very fast on mobile, but on desktop if feels very slow, I tried to fix this by changing the speedLimit based on screen size, but it still doesn't feel right.
+- Decorations, the trails coming off the counter often look out of place, as they are sometimes misaligned or in the wrong direction. I also had trouble coming up with the colours, originally I had a blue and purple colour scheme, but decided to make it greyscale later on to fit in with the board.
+- Difficulty making the AI/bot, currently the bot is very basic, and it often is too easy or too difficult, depending on its speed. Making the AI behave like a human is very difficult, and I also had a lot of glitches where it just starts shaking. Later I learned this problem was due to the way Matter.js handles movement, specifically because the counter's velocity keeps switching between positive and negative, so the AI kept going forwards and then reverting backwards.

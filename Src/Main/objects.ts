@@ -12,9 +12,10 @@ class Body {
 }
 
 class Paddle extends Body{
-    static mRadius = 75;
+    static mRadius = 1; //set dynamically
     static touchOffsetY = 20;
     static moveSpeed = 20;
+    static AISpeed = 12.5;
 
     currentPosition: Vector2D = Vector(0, 0);
     previousPosition: Vector2D = Vector(0, 0);
@@ -38,10 +39,10 @@ class Paddle extends Body{
     checkCounterInteraction() {
         const collision = Matter.Collision.collides(this.mBody, COUNTER.mBody);
         if (collision != null) {
-            let [xDamping, yDamping] = [0.2, 1];
-            if (isMobile == true) {
-                xDamping *= 0.6; //mobile screen size is smaller so the counter should move slower
-                yDamping *= 0.3;
+            let [xDamping, yDamping] = [0.15, 1];
+            if (isMobile == false) {
+                xDamping *= 1.5;
+                yDamping *= 1.5;
             }
     
             const travelVector = [(this.currentPosition.x - this.previousPosition.x) * xDamping, (this.currentPosition.y - this.previousPosition.y) * yDamping]; //find travel vector which is currentXY - previousXY
@@ -67,18 +68,30 @@ class Paddle extends Body{
         super();
         const mBody = Matter.Bodies.circle(position.x, position.y, Paddle.mRadius, { isStatic: true }); //just spawn at canvasHeight/2 to stop it from clamping the counter, the position gets reset by the BOTTOM_X etc... anyway as soon as the game starts
         this.mBody = mBody;
+        this.mBody.friction = 0;
+        this.mBody.frictionAir = 0;
+        this.mBody.frictionStatic = 0;
+
         [this.previousPosition.x, this.previousPosition.y] = [position.x, position.y];
         [this.currentPosition.x, this.currentPosition.y] = [position.x, position.y];
     }
 }
 
 class Counter extends Body {
-    static mRadius = 30;
+    static mRadius = 1; //set dynamically
+    static speedLimit = 1; //set dynamically
 
     reset() {
         Matter.Body.setAngularVelocity(this.mBody, 0);
         Matter.Body.setVelocity(this.mBody, Vector(0, 0));
         Matter.Body.set(this.mBody, "position", Vector(0, 0));
+    }
+    limitSpeed() {
+        if (this.mBody.speed > Counter.speedLimit) {
+            const normalizedVelocity = Matter.Vector.normalise(this.mBody.velocity);
+            Matter.Body.setAngularVelocity(this.mBody, 0);
+            Matter.Body.setVelocity(this.mBody, Matter.Vector.mult(normalizedVelocity, Counter.speedLimit));
+        }
     }
 
     checkGoalInteraction() {
@@ -93,6 +106,16 @@ class Counter extends Body {
         else if (topCollision != null) {
             BOTTOM_SCORE += 1;
             UpdateScores();
+            this.reset();
+        }
+    }
+    checkOutOfBounds() {
+        const position = this.mBody.position;
+        const top = position.y > canvasHeight / 2;
+        const bottom = position.y < -(canvasHeight / 2);
+        const left = position.x < -(canvasWidth / 2);
+        const right = position.x > canvasWidth / 2;
+        if (top || bottom || left || right) {
             this.reset();
         }
     }
