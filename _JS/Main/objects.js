@@ -100,10 +100,10 @@ class Counter extends Body {
     }
     checkOutOfBounds() {
         const position = this.mBody.position;
-        const top = position.y > canvasHeight / 2;
-        const bottom = position.y < -(canvasHeight / 2);
-        const left = position.x < -(canvasWidth / 2);
-        const right = position.x > canvasWidth / 2;
+        const top = position.y > (canvasHeight / 2) + Counter.mRadius;
+        const bottom = position.y < -(canvasHeight / 2) - Counter.mRadius;
+        const left = position.x < -(canvasWidth / 2) - Counter.mRadius;
+        const right = position.x > canvasWidth / 2 + Counter.mRadius;
         if (top || bottom || left || right) {
             this.reset();
         }
