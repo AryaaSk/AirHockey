@@ -39,9 +39,9 @@ class Paddle extends Body{
         const collision = Matter.Collision.collides(this.mBody, COUNTER.mBody);
         if (collision != null) {
             let [xDamping, yDamping] = [0.2, 1];
-            if (isMobile == false) {
-                xDamping *= 0.8;
-                yDamping *= 0.8;
+            if (isMobile == true) {
+                xDamping *= 0.6; //mobile screen size is smaller so the counter should move slower
+                yDamping *= 0.3;
             }
     
             const travelVector = [(this.currentPosition.x - this.previousPosition.x) * xDamping, (this.currentPosition.y - this.previousPosition.y) * yDamping]; //find travel vector which is currentXY - previousXY
