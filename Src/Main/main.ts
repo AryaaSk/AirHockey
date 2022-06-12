@@ -217,16 +217,13 @@ const HandleKeys = () => {
 }
 const TickAI = () => {
     //AI controls top paddle, every tick it will try and go towards the paddle
-    const AICounterVector = Matter.Vector.sub(Vector(COUNTER.mBody.position.x, COUNTER.mBody.position.y + Counter.mRadius * 2), Vector(TOP_X, TOP_Y));
+    const AICounterVector = (COUNTER.mBody.position.y < 0) ? Matter.Vector.sub(Vector(COUNTER.mBody.position.x, COUNTER.mBody.position.y + Counter.mRadius * 2 + canvasHeight / 4), Vector(TOP_X, TOP_Y)) : Matter.Vector.sub(Vector(COUNTER.mBody.position.x, COUNTER.mBody.position.y + Counter.mRadius * 2), Vector(TOP_X, TOP_Y)); //adding canvasheight/4 to simulate prediction
     const normalized = Matter.Vector.normalise(AICounterVector);
 
-    if (COUNTER.mBody.position.y < 0) { 
-        TOP_X += normalized.x * Paddle.moveSpeed / 2; //if the counter is not on the AIs side then it should still move, but just not changing the y and much slower
-    }
-    else {
-        TOP_X += normalized.x * Paddle.moveSpeed;
-        TOP_Y += normalized.y * Paddle.moveSpeed;
-    }
+    const moveSpeed = (COUNTER.mBody.position.y < 0) ? Paddle.moveSpeed / 2 : Paddle.moveSpeed;
+
+    TOP_X += normalized.x * moveSpeed;
+    TOP_Y += normalized.y * moveSpeed;
 
     if (TOP_X < -(canvasWidth / 2)) {
         TOP_X = -(canvasWidth / 2);
