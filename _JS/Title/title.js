@@ -1,10 +1,10 @@
 "use strict";
 const InitButtonListeners = () => {
     document.getElementById("playButton1Player").onclick = () => {
-        location.href = "/Src/Main/main.html?players=1&&theme=" + CURRENT_THEME_INDEX;
+        location.href = "/Src/Main/main.html?players=1";
     };
     document.getElementById("playButton2Players").onclick = () => {
-        location.href = "/Src/Main/main.html?players=2&&theme=" + CURRENT_THEME_INDEX;
+        location.href = "/Src/Main/main.html?players=2";
     };
     document.getElementById("changeTheme").onclick = () => {
         ChangeTheme();

@@ -354,7 +354,7 @@ const GameOver = () => {
     }
 
     document.getElementById("doneButton")!.onclick = () => {
-        location.href = "/Src/Title/title.html?theme=" + CURRENT_THEME_INDEX;
+        location.href = "/Src/Title/title.html";
     }
 }
 

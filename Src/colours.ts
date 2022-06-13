@@ -10,8 +10,7 @@ let MENU_COLOUR_ACTIVE = "";
 let BORDER_COLOUR = "";
 let FONT_COLOUR = "";
 
-const url = new URLSearchParams(window.location.search);
-const CURRENT_THEME_INDEX = Number(url.get('theme')); //if it is not there then it goes to 0 which is the default anyway
+const CURRENT_THEME_INDEX = Number(localStorage.getItem('theme')); //if it is not there then it goes to 0 which is the default anyway
 
 const LoadTheme: (() => void)[] = [ //call a function from this array to load that theme
     () => { //default
@@ -77,7 +76,8 @@ const LoadTheme: (() => void)[] = [ //call a function from this array to load th
 
 const ChangeTheme = () => {
     const nextThemeIndex = (CURRENT_THEME_INDEX == LoadTheme.length - 1) ? 0 : CURRENT_THEME_INDEX + 1;
-    location.href = "/Src/Title/title.html?theme=" + String(nextThemeIndex);
+    localStorage.setItem("theme", String(nextThemeIndex));
+    location.reload();
 }
 const UpdateCSS = () => {
     document.body.style.setProperty('--colour1', BOTTOM_COLOUR);
