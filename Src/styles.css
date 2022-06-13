@@ -4,7 +4,7 @@
 }
 body {
     font-family: 'Impact';
-    color: black;
+    color: var(--fontColour);
 
     margin: 0;
     touch-action: none;
@@ -22,7 +22,7 @@ body {
     height: 100%; /* This is so I can change the bodies background colour without affecting the red and blue colours due to opacity, in fullscreen PWA mode */
     width: 100%;
     background-color: white;
-    border-top: 1px solid black;
+    border-top: 1px solid var(--borderColour);
 
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
@@ -45,7 +45,7 @@ body {
     transform: translate(-50%, calc(-50% - 1.8rem));
 
     background-color: var(--menuColour);
-    border: 1px solid black;
+    border: 1px solid var(--borderColour);
 
     text-align: center;
     
@@ -57,9 +57,11 @@ body {
     width: 90%;
     margin-bottom: 15px;
 
-    background-color: var(--menuColour);
-    border: 1px solid black;
+    background-color: var(--menuButtonColour);
+    border: 1px solid var(--borderColour);
     font-size: 1.2rem;
+
+    color: var(--fontColour);
 }
 .menuButton:active {
     background-color: var(--menuColourActive);

@@ -25,7 +25,7 @@ const RenderDecorations = () => {
         [decorationCanvas.canvasWidth / 2, (decorationCanvas.canvasHeight / 2)],
         [-decorationCanvas.canvasWidth / 2, (decorationCanvas.canvasHeight / 2)]
     ], TOP_COLOUR_BACKGROUND);
-    decorationCanvas.drawLine([-(decorationCanvas.canvasWidth / 2), 0], [decorationCanvas.canvasWidth / 2, 0], "black", 10);
+    decorationCanvas.drawLine([-(decorationCanvas.canvasWidth / 2), 0], [decorationCanvas.canvasWidth / 2, 0], OBJECT_COLOUR, 5);
     //get counter's velocity and draw a trail
     //since the velocity is just a vector, we can just that to calculate the 2 points to draw the line, this also takes into account its magnitude so I dont have to scale them myself
     if (COUNTER.mBody.speed > 10) {
@@ -71,8 +71,8 @@ const RenderBodies = () => {
         for (const vertex of vertices) {
             points.push([vertex.x, vertex.y]);
         }
-        const colour = (body.colour == undefined) ? "#ffffff60" : body.colour;
-        canvas.drawShape(points, colour, true);
+        const colour = (body.colour == undefined) ? OBJECT_COLOUR + "90" : body.colour;
+        canvas.drawShape(points, colour, true, BORDER_COLOUR);
     }
 };
 //Game setup
@@ -240,10 +240,11 @@ const BOTTOM_PADDLE = new Paddle(Vector(0, -(canvas.canvasHeight / 4)));
 const TOP_PADDLE = new Paddle(Vector(0, canvas.canvasHeight / 4));
 BOTTOM_PADDLE.touchOffset.y = Paddle.touchOffsetY;
 TOP_PADDLE.touchOffset.y = -Paddle.touchOffsetY;
-BOTTOM_PADDLE.colour = BOTTOM_COLOUR + "80";
-TOP_PADDLE.colour = TOP_COLOUR + "80";
+BOTTOM_PADDLE.colour = BOTTOM_COLOUR;
+TOP_PADDLE.colour = TOP_COLOUR;
 Matter.Composite.add(ENGINE.world, [BOTTOM_PADDLE.mBody, TOP_PADDLE.mBody]);
 const COUNTER = new Counter();
+COUNTER.colour = COUNTER_COLOUR;
 Matter.Composite.add(ENGINE.world, [COUNTER.mBody]);
 const BOTTOM_GOAL = new Goal(Vector(0, -(canvas.canvasHeight / 2) + (Goal.mHeight / 2)), BOTTOM_COLOUR);
 const TOP_GOAL = new Goal(Vector(0, (canvas.canvasHeight / 2) - (Goal.mHeight / 2)), TOP_COLOUR);
@@ -291,7 +292,7 @@ const GameOver = () => {
         location.reload();
     };
     document.getElementById("doneButton").onclick = () => {
-        location.href = "/Src/Title/title.html";
+        location.href = "/Src/Title/title.html?theme=" + CURRENT_THEME_INDEX;
     };
 };
 MAIN();
