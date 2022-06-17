@@ -63,6 +63,19 @@ const LoadTheme = [
         MENU_COLOUR_ACTIVE = "rgb(225, 225, 225)";
         BORDER_COLOUR = "#000000";
         FONT_COLOUR = "#000000";
+    },
+    () => {
+        BOTTOM_COLOUR = "#0064e8";
+        BOTTOM_COLOUR_BACKGROUND = "#1e9f0d";
+        TOP_COLOUR = "#c71515";
+        TOP_COLOUR_BACKGROUND = "#1e9f0d";
+        COUNTER_COLOUR = "#ffffff";
+        OBJECT_COLOUR = "#ffffff";
+        MENU_COLOUR = "#ffffff";
+        MENU_BUTTON_COLOUR = "rgb(245, 245, 245)";
+        MENU_COLOUR_ACTIVE = "rgb(225, 225, 225)";
+        BORDER_COLOUR = "#000000";
+        FONT_COLOUR = "#000000";
     }
 ];
 const ChangeTheme = () => {

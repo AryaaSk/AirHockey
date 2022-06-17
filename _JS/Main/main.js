@@ -156,7 +156,15 @@ const InitListeners = () => {
                 if (mouseDown == false) {
                     return;
                 }
-                [BOTTOM_X, BOTTOM_Y] = [canvas.GridX($e.clientX), canvas.GridY($e.clientY)];
+                const clickY = canvas.GridY($e.clientY);
+                if (clickY < 0) { //halfline - halfRacquetHeight
+                    if (clickY < (0 - (Paddle.mRadius) - Paddle.touchOffsetY)) {
+                        [BOTTOM_X, BOTTOM_Y] = [canvas.GridX($e.clientX), canvas.GridY($e.clientY)];
+                    }
+                    else {
+                        [BOTTOM_X, BOTTOM_Y] = [canvas.GridX($e.clientX), -1 - (Paddle.mRadius) - Paddle.touchOffsetY];
+                    }
+                }
             };
         }
     }
